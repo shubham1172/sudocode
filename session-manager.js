@@ -40,14 +40,14 @@ exports.checkLogin = function(req, res, pool){
   });
 }
 
-exports.checkLoginf = function(req, pool){
+exports.checkLoginf = function(req, pool, callback){
   isLogged(req, pool, function(result){
     if(result=="false"){
-      return "false";
+      callback("false");
     }else if(result=="error"){
-      return "error";
+      callback("error");
     }else{
-      return result;
+      callback(result);
     }
   });
 }

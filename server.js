@@ -64,6 +64,10 @@ app.post('/create-article', function(req, res){
   articleManager.createArticle(req,res,pool);
 });
 
+app.get('/get-articles/:categoryId', function(req, res){
+  articleManager.getArticle(req,res,pool);
+});
+
 var port = 8082;
 app.listen(port, function(){
   console.log('CHATBOT up and running on 8082!');

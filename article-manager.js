@@ -73,42 +73,100 @@ function insertArticle(status, uid, title, content, categories, pool, user, call
   }
 }
 
+function getArticleByCategory(cid, pool, callback){
+  getCategoryName(cid, pool, function(category){
+    pool.task(function(t){
+      return t.any("SELECT aid FROM sudocode.\"article-categories\" WHERE category=$1", [category])
+        .then(function(result){
+          for(var x=0;x<result.length;x++){
+              result[x] = parseInt(result[x].aid, 10);
+            }
+            //result is now an array of aids
+            return t.any("SELECT \"user\", title, content, datetime FROM sudocode.articles WHERE id = ANY($1)", [result])
+              .then(function(resultx){
+                callback(resultx);
+              })
+        })
+        .catch(function(error){
+            console.log(error.toString());
+            callback("error");
+        });
+    });
+  });
+}
+
+function getCategoryName(cid, pool, callback){
+  pool.task(function(t){
+    return t.one("SELECT name FROM sudocode.categories WHERE id=$1", [cid])
+      .then(function(result){
+        callback(result.name);
+      })
+      .catch(function(error){
+        console.log(error.toString());
+        callback("error");
+      });
+  });
+}
+
 exports.createArticle = function(req, res, pool){
-    var result = sessionManager.checkLoginf(req, pool);
+    sessionManager.checkLoginf(req, pool,function(result){
+      if(result=="false"){
+        res.status(403).send("Login to create article!");
+      }else if(result=="error"){
+        res.status(500).send("error");
+      }else{
+        /**
+        We will be using a new approach for asynchronous calls
+        async.waterfall to the rescue!
+        The functions called will be select users, check categories, create article and create article-categories value
+        */
+        var uid = req.session.auth.userId;
+        var title = req.body.title;
+        var content = req.body.content;
+        var categories = JSON.parse(req.body.categories);
+        if(title.trim()==""||content.trim()==""||categories.length==0){
+          res.status(500).send("bad request");
+        } else{
+          async.waterfall([async.apply(getUser, 200, uid, title, content, categories, pool),
+             checkArticle,
+             checkCategories,
+             insertArticle,
+            ], function(err, result){
+            if(err){
+              console.log(err.toString());
+            }else{
+                if(result==200){
+                  res.status(200).send("article created successfully");
+                }else if(result==403){
+                  res.status(403).send("forbidden");
+                }else if(result==417){
+                  res.status(200).send("article already exists");
+                }else if (result==203){
+                  res.status(203).send("invalid categories");
+                }else{
+                  res.status(500).send("error");
+                }
+            }
+          });
+        }
+      }
+    });
+}
+
+exports.getArticle = function(req, res, pool){
+  sessionManager.checkLoginf(req, pool,function(result){
     if(result=="false"){
-      res.status(403).send("Log in to create article!");
+      res.status(403).send("Login to get articles!");
     }else if(result=="error"){
       res.status(500).send("error");
     }else{
-      /**
-      We will be using a new approach for asynchronous calls
-      async.waterfall to the rescue!
-      The functions called will be select users, check categories, create article and create article-categories value
-      */
-      var uid = req.session.auth.userId;
-      var title = req.body.title;
-      var content = req.body.content;
-      var categories = JSON.parse(req.body.categories);
-      async.waterfall([async.apply(getUser, 200, uid, title, content, categories, pool),
-         checkArticle,
-         checkCategories,
-         insertArticle,
-        ], function(err, result){
-        if(err){
-          console.log(err.toString());
-        }else{
-            if(result==200){
-              res.status(200).send("article created successfully");
-            }else if(result==403){
-              res.status(403).send("forbidden");
-            }else if(result==417){
-              res.status(200).send("article already exists");
-            }else if (result==203){
-              res.status(203).send("invalid categories");
-            }else{
-              res.status(500).send("error");
-            }
-        }
-      });
-    }
+        var cid = req.params.categoryId;
+        getArticleByCategory(cid, pool, function(resultx){
+          if(resultx=="error")
+            res.status(500).send("error");
+          else
+            res.status(200).send(resultx);
+        });
+      }
+  });
 }
