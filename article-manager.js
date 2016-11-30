@@ -10,7 +10,11 @@ function getUser(status, uid, title, content, categories, pool, callback){
     return t.one("SELECT * FROM sudocode.users WHERE id = $1", [uid])
       .then(function(data){
         user = data.username;
-        callback(null, status, uid, title, content, categories, user, pool);
+        //to ensure calls from other non waterfall functions as well
+        if(status==-1)
+          callback(user);
+        else
+          callback(null, status, uid, title, content, categories, user, pool);
       });
   });
 }
@@ -82,7 +86,7 @@ function getArticleByCategory(cid, pool, callback){
               result[x] = parseInt(result[x].aid, 10);
             }
             //result is now an array of aids
-            return t.any("SELECT \"user\", title, content, datetime FROM sudocode.articles WHERE id = ANY($1)", [result])
+            return t.any("SELECT \"user\", title, content, datetime FROM sudocode.articles WHERE id = ANY($1) ORDER BY datetime DESC", [result])
               .then(function(resultx){
                 callback(resultx);
               })
@@ -105,6 +109,21 @@ function getCategoryName(cid, pool, callback){
         console.log(error.toString());
         callback("error");
       });
+  });
+}
+
+function deleteArticleWithCategories(pool, id, callback){
+  pool.task(function(t){
+    return t.batch([
+        t.none("DELETE FROM sudocode.\"article-categories\" WHERE aid= $1", [id]),
+        t.none("DELETE FROM sudocode.articles WHERE id=$1",[id])
+    ])
+  })
+  .then(function(){
+      callback("done");
+  })
+  .catch(function(error){
+    callback("error");
   });
 }
 
@@ -168,5 +187,42 @@ exports.getArticle = function(req, res, pool){
             res.status(200).send(resultx);
         });
       }
+  });
+}
+
+exports.deleteArticle = function(req, res, pool){
+  sessionManager.checkLoginf(req,pool,function(result){
+    if(result=="false")
+      res.status(403).send("Login to delete article!")
+    else if(result=="error")
+      res.status(500).send("error");
+    else{
+      var aid = req.query.id;
+      var uid = req.session.auth.userId;
+      pool.task(function(t){
+        return t.any("SELECT \"user\" FROM sudocode.articles WHERE id=$1", [aid])
+      })
+      .then(function(resultx){
+          getUser(-1,uid,null,null,null,pool,function(username){
+            if(resultx[0].user==username){
+                  if(resultx.length==0)
+                    res.status(500).send("Article doesn't exist");
+                  else
+                    deleteArticleWithCategories(pool, aid, function(message){
+                      if(message=="error")
+                        res.status(500).send("error");
+                      else
+                        res.status(200).send("Article " + aid + " successfully deleted");
+                    });
+            }
+            else
+              res.status(403).send("Article doesn't belong to you!")
+        });
+      })
+      .catch(function(error){
+          console.log(error.toString());
+          res.status(500).send("error");
+      });
+    }
   });
 }

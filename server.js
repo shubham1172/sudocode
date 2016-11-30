@@ -64,6 +64,11 @@ app.post('/create-article', function(req, res){
   articleManager.createArticle(req,res,pool);
 });
 
+// /delete-article/?id=aid
+app.get('/delete-article', function(req, res){
+  articleManager.deleteArticle(req, res, pool);
+});
+
 app.get('/get-articles/:categoryId', function(req, res){
   articleManager.getArticle(req,res,pool);
 });
