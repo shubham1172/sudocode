@@ -91,3 +91,13 @@ exports.logout = function(req, res, pool){
     }
   });
 }
+
+exports.checkUser = function(req, res, pool){
+  pool.one("SELECT * FROM sudocode.users WHERE username = $1", [req.query.username])
+    .then(function(result){
+      res.status(200).send(result.id);
+    })
+    .catch(function(error){
+      res.status(500).send(false);
+    });
+}

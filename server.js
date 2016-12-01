@@ -5,7 +5,7 @@ var pgp = require('pg-promise')();
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var sessionManager = require('./session-manager.js');
-var articleManager = require('./article-manager.js');
+var articleManager = require('./article-manager-new.js');
 
 var config = {
     user: 'postgres',
@@ -59,18 +59,28 @@ app.get('/logout', function(req, res){
   sessionManager.logout(req,res,pool);
 });
 
+app.get('check-login', function(req, res){
+  sessionManager.checkUser(req, res, pool);
+});
+
 //article management
 app.post('/create-article', function(req, res){
   articleManager.createArticle(req,res,pool);
 });
 
-// /delete-article/?id=aid
+/** /delete-article/?id=aid*/
 app.get('/delete-article', function(req, res){
   articleManager.deleteArticle(req, res, pool);
 });
 
 app.get('/get-articles/:categoryId', function(req, res){
   articleManager.getArticle(req,res,pool);
+});
+
+/** /edit-article/?id=aid*/
+
+app.post('/edit-article/', function(req, res){
+  articleManager.editArticle(req,res,pool);
 });
 
 var port = 8082;
