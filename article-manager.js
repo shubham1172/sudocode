@@ -2,114 +2,129 @@ var sessionManager = require("./session-manager");
 var promise = require('bluebird');
 var async = require('async');
 
-function getUser(status, uid, title, content, categories, pool, callback){
-  //async.apply(getUser, uid, title, content, categories)
-  //SELECT username
-  var user;
+function getArticle(condition, pool, callback){
   pool.task(function(t){
-    return t.one("SELECT * FROM sudocode.users WHERE id = $1", [uid])
-      .then(function(data){
-        user = data.username;
-        //to ensure calls from other non waterfall functions as well
-        if(status==-1)
-          callback(user);
-        else
-          callback(null, status, uid, title, content, categories, user, pool);
-      });
-  });
+    return t.any("SELECT * FROM sudocode.articles WHERE " + condition.one, [condition.two]);
+  })
+  .then(function(results){
+    callback(results);
+  })
+  .catch(function(error){
+    console.log(error.toString());
+    callback("error");
+  })
 }
 
-function checkArticle(status, uid, title, content, categories, user, pool, callback){
-  //CHECK if article already exists
-  pool.task(function(t){
-    return t.any("SELECT COUNT (*) FROM sudocode.articles WHERE \"user\" = $1 and title = $2 and \"content\" = $3", [user, title, content])
-    .then(function(data){
-      if(data[0].count!=0){
-        status = 417;
-      }
-      if(callback){
-      callback(null, status, uid, title, content, categories, pool, user);
-      }
+function getArticleByCategory(category, pool, callback){
+  pool.any("SELECT aid FROM sudocode.\"article-categories\" WHERE category = $1", [category[0].toUpperCase() + category.toLowerCase().substring(1)])
+  .then(function(result){
+    for(var x=0;x<result.length;x++){
+        result[x] = parseInt(result[x].aid, 10);
+    }
+    var condition = {one:"id = ANY($1) ORDER BY datetime DESC", two: result};
+    getArticle(condition, pool, function(resultx){
+      callback(resultx);
     });
+  })
+  .catch(function(error){
+    console.log(error.toString());
+    callback("error");
   });
 }
 
-function checkCategories(status, uid, title, content, categories, pool, user, callback){
-  //check if all the categories are correct
-  pool.tx(function(t){
+function checkArticle(obj, callback){
+  var condition = "title = '" + obj.title + "' and content = '" + obj.content + "' and uid = '" + obj.uid + "'";
+  obj.pool.task(function(t){
+    return t.any("SELECT uid, title, content, datetime, lastmodified FROM sudocode.articles WHERE " + condition);
+  })
+  .then(function(results){
+    if(results=="error")
+      obj.status = 500;
+    else if(results.length==0)
+      obj.status = 200;
+    else
+      obj.status = 417;
+    console.log(results);
+    callback(null, obj);
+  })
+  .catch(function(error){
+    obj.status = 500;
+    callback(null, obj);
+  });
+}
+
+function checkCategories(obj, callback){
+  obj.pool.tx(function(t){
     var queries = [];
-    for(var x=0; x<categories.length; x++){
-      queries.push(this.one("SELECT id FROM sudocode.categories WHERE name = $1", [categories[x]]));
+    for(var x=0; x<obj.categories.length; x++){
+      queries.push(this.one("SELECT id FROM sudocode.categories WHERE name = $1", [obj.categories[x]]));
     }
     return this.batch(queries);
   })
-    .then(function(data){
-        callback(null, status, uid, title, content, categories, pool, user);
-    })
-    .catch(function(err){
-      callback(null, 203, uid, title, content, categories, pool, user);
-    });
+  .then(function(result){
+      //All okay
+      callback(null, obj);
+  })
+  .catch(function(error){
+    console.log(error.toString());
+    if(obj.status==200) obj.status = 203;
+    callback(null, obj);
+  });
 }
 
-function insertArticle(status, uid, title, content, categories, pool, user, callback){
-  if(status==200){
-    pool.tx(function(t){
-      return t.one("INSERT INTO sudocode.articles(\"user\",title,content) VALUES($1,$2,$3) RETURNING id",[user,title,content])
-      .then(function(data){
-          var queries = [];
-          for(var x=0;x<categories.length;x++){
-            queries.push(t.none('INSERT INTO sudocode.\"article-categories\"(aid, category) VALUES($1, $2)', [data.id,categories[x]]));
-          }
-          return promise.all(queries)
-          .then(function(){
-            return promise.resolve(data.id);
-          })
-          .catch(function(error){
-            console.log(error.toString());
-          })
-      });
+function insertArticle(obj, callback){
+  if(obj.status==200){
+    obj.pool.tx(function(t){
+        return t.one("INSERT INTO sudocode.articles(uid,title,content) VALUES($1,$2,$3) RETURNING id",[obj.uid, obj.title, obj.content])
+        .then(function(data){
+            var queries = [];
+            for(var x=0;x<obj.categories.length;x++)
+              queries.push(t.none('INSERT INTO sudocode.\"article-categories\"(aid, category) VALUES($1, $2)', [data.id ,obj.categories[x]]));
+            return promise.all(queries)
+              .then(function(){
+                return promise.resolve(data.id);
+              });
+        });
     })
     .then(function(result){
-      callback(null, status);
+      callback(null, obj.status);
+    })
+    .catch(function(error){
+      obj.status = 500;
+      console.log(error.toString());
+      callback(null, obj.status);
     });
   }else{
-    callback(null,status);
+    callback(null, obj.status);
   }
 }
 
-function getArticleByCategory(cid, pool, callback){
-  getCategoryName(cid, pool, function(category){
-    pool.task(function(t){
-      return t.any("SELECT aid FROM sudocode.\"article-categories\" WHERE category=$1", [category])
-        .then(function(result){
-          for(var x=0;x<result.length;x++){
-              result[x] = parseInt(result[x].aid, 10);
-            }
-            //result is now an array of aids
-            return t.any("SELECT \"user\", title, content, datetime FROM sudocode.articles WHERE id = ANY($1) ORDER BY datetime DESC", [result])
-              .then(function(resultx){
-                callback(resultx);
-              })
-        })
-        .catch(function(error){
-            console.log(error.toString());
-            callback("error");
+function updateArticle(obj, callback){
+  if(obj.status==200){
+    obj.pool.tx(function(t){
+        return t.none("UPDATE sudocode.articles SET title=$1, content=$2, lastmodified=now()::timestamp WHERE id=$3;",[obj.title, obj.content, obj.id])
+        .then(function(){
+            var queries = [];
+            queries.push(t.none('DELETE FROM sudocode.\"article-categories\" WHERE aid = $1', [obj.id]));
+            for(var x=0;x<obj.categories.length;x++)
+              queries.push(t.none('INSERT INTO sudocode.\"article-categories\"(aid, category) VALUES($1, $2)', [obj.id ,obj.categories[x]]));
+            return promise.all(queries)
+              .then(function(){
+                return promise.resolve(obj.id);
+              });
         });
+    })
+    .then(function(result){
+      callback(null, obj.status);
+    })
+    .catch(function(error){
+      obj.status = 500;
+      console.log(error.toString());
+      callback(null, obj.status);
     });
-  });
-}
-
-function getCategoryName(cid, pool, callback){
-  pool.task(function(t){
-    return t.one("SELECT name FROM sudocode.categories WHERE id=$1", [cid])
-      .then(function(result){
-        callback(result.name);
-      })
-      .catch(function(error){
-        console.log(error.toString());
-        callback("error");
-      });
-  });
+  }else{
+    callback(null, obj.status);
+  }
 }
 
 function deleteArticleWithCategories(pool, id, callback){
@@ -128,31 +143,26 @@ function deleteArticleWithCategories(pool, id, callback){
 }
 
 exports.createArticle = function(req, res, pool){
-    sessionManager.checkLoginf(req, pool,function(result){
-      if(result=="false"){
-        res.status(403).send("Login to create article!");
-      }else if(result=="error"){
-        res.status(500).send("error");
-      }else{
-        /**
-        We will be using a new approach for asynchronous calls
-        async.waterfall to the rescue!
-        The functions called will be select users, check categories, create article and create article-categories value
-        */
-        var uid = req.session.auth.userId;
-        var title = req.body.title;
-        var content = req.body.content;
-        var categories = JSON.parse(req.body.categories);
-        if(title.trim()==""||content.trim()==""||categories.length==0){
-          res.status(500).send("bad request");
-        } else{
-          async.waterfall([async.apply(getUser, 200, uid, title, content, categories, pool),
-             checkArticle,
-             checkCategories,
-             insertArticle,
-            ], function(err, result){
+  sessionManager.checkLoginf(req, pool, function(isLogged){
+    if(isLogged=="false")
+      res.status(403).send("Login to create article");
+    else if(isLogged=="error")
+      res.status(500).send("Error");
+    else {
+      //Create article
+      var uid = req.session.auth.userId;
+      var title = req.body.title;
+      var content = req.body.content;
+      var categories = JSON.parse(req.body.categories);
+      if(title.trim()==""||content.trim()==""||categories.length==0)
+        res.status(500).send("Bad request");
+      else{
+        var obj = {title: title, content: content, uid: uid, pool: pool, categories: categories, status: 200};
+        async.waterfall([async.apply(checkArticle, obj), checkCategories, insertArticle,],
+          function(err, result){
             if(err){
               console.log(err.toString());
+              res.status(500).send("error");
             }else{
                 if(result==200){
                   res.status(200).send("article created successfully");
@@ -167,26 +177,42 @@ exports.createArticle = function(req, res, pool){
                 }
             }
           });
-        }
       }
-    });
+    }
+  });
 }
 
+//can be done with both category and userId
 exports.getArticle = function(req, res, pool){
-  sessionManager.checkLoginf(req, pool,function(result){
-    if(result=="false"){
-      res.status(403).send("Login to get articles!");
-    }else if(result=="error"){
+  sessionManager.checkLoginf(req, pool, function(isLogged){
+    if(isLogged=="false")
+      res.status(403).send("Login to view the articles");
+    else if(isLogged=="error")
       res.status(500).send("error");
-    }else{
-        var cid = req.params.categoryId;
-        getArticleByCategory(cid, pool, function(resultx){
-          if(resultx=="error")
-            res.status(500).send("error");
+    else{
+      var category = req.query.category;
+      var uid = req.query.userId;
+      if(category === undefined && uid === undefined){
+        res.status(500).send("bad request");
+      }
+      else if(uid === undefined){
+        getArticleByCategory(category, pool, function(results){
+          if(results=="error")
+            res.status(500).send("Error");
           else
-            res.status(200).send(resultx);
+            res.status(200).send(results);
         });
       }
+      else{
+        var condition = {one: "uid = $1", two: uid};
+        getArticle(condition, pool, function(results){
+          if(results=="error")
+            res.status(500).send("Error");
+          else
+            res.status(200).send(results);
+        });
+      }
+    }
   });
 }
 
@@ -200,29 +226,82 @@ exports.deleteArticle = function(req, res, pool){
       var aid = req.query.id;
       var uid = req.session.auth.userId;
       pool.task(function(t){
-        return t.any("SELECT \"user\" FROM sudocode.articles WHERE id=$1", [aid])
+        return t.any("SELECT uid FROM sudocode.articles WHERE id=$1", [aid])
       })
       .then(function(resultx){
-          getUser(-1,uid,null,null,null,pool,function(username){
-            if(resultx[0].user==username){
-                  if(resultx.length==0)
+          if(resultx[0].uid==uid){
+                if(resultx.length==0)
                     res.status(500).send("Article doesn't exist");
-                  else
-                    deleteArticleWithCategories(pool, aid, function(message){
+                else
+                  deleteArticleWithCategories(pool, aid, function(message){
                       if(message=="error")
                         res.status(500).send("error");
                       else
                         res.status(200).send("Article " + aid + " successfully deleted");
                     });
-            }
-            else
-              res.status(403).send("Article doesn't belong to you!")
-        });
+          }
+          else
+            res.status(403).send("Article doesn't belong to you!")
       })
       .catch(function(error){
           console.log(error.toString());
-          res.status(500).send("error");
+          res.status(500).send("Error");
       });
     }
   });
+}
+
+exports.editArticle = function(req, res, pool){
+    sessionManager.checkLoginf(req, pool, function(isLogged){
+      if(isLogged=="false")
+        res.status(403).send("Login to edit article");
+      else if(isLogged=="error")
+        res.status(500).send("Error");
+      else{
+        var aid = req.body.id;
+        var uid = req.session.auth.userId;
+        pool.task(function(t){
+          return t.any("SELECT uid FROM sudocode.articles WHERE id=$1", [aid])
+        })
+        .then(function(resultx){
+            if(resultx[0].uid==uid){
+                  //edit
+                  title = req.body.title;
+                  content = req.body.content;
+                  categories = JSON.parse(req.body.categories);
+                  if(title.trim()==""||content.trim()==""||categories.length==0)
+                    res.status(500).send("Bad request");
+                  else{
+                    //we will check if the article already exists
+                    var obj = {id: aid, title: title, content: content, uid: uid, pool: pool, categories: categories, status: 200};
+                    async.waterfall([async.apply(checkArticle, obj), checkCategories, updateArticle,],
+                      function(err, result){
+                        if(err){
+                          console.log(err.toString());
+                          res.status(500).send("error");
+                        }else{
+                            if(result==200){
+                              res.status(200).send("article updated successfully");
+                            }else if(result==403){
+                              res.status(403).send("forbidden");
+                            }else if(result==417){
+                              res.status(200).send("article already exists");
+                            }else if (result==203){
+                              res.status(203).send("invalid categories");
+                            }else{
+                              res.status(500).send("error");
+                            }
+                        }
+                      });
+                  }
+            }
+            else
+              res.status(403).send("Article doesn't belong to you!")
+        })
+        .catch(function(error){
+            console.log(error.toString());
+            res.status(500).send("Error");
+        });
+      }
+    });
 }

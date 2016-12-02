@@ -53,11 +53,11 @@ exports.checkLoginf = function(req, pool, callback){
 }
 
 exports.login =  function(req, res, pool) {
-   var username = req.body.username;
+   var id = req.body.id;
    var password = req.body.password;
    pool.task(function(t){
-     return t.batch([t.one('SELECT * FROM sudocode.users WHERE username = $1', [username]),
-                     t.none('UPDATE sudocode.users set state=$1 where username = $2', [true,username])
+     return t.batch([t.one('SELECT * FROM sudocode.users WHERE id = $1', [id]),
+                     t.none('UPDATE sudocode.users set state=$1 where id = $2', [true,id])
      ]);
    })
    .then(function(data){
@@ -92,10 +92,10 @@ exports.logout = function(req, res, pool){
   });
 }
 
-exports.checkUser = function(req, res, pool){
-  pool.one("SELECT * FROM sudocode.users WHERE username = $1", [req.query.username])
+exports.checkId = function(req, res, pool){
+  pool.one("SELECT * FROM sudocode.users WHERE id = $1", [req.query.id])
     .then(function(result){
-      res.status(200).send(result.id);
+      res.status(200).send(result.username);
     })
     .catch(function(error){
       res.status(500).send(false);
