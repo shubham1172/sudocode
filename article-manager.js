@@ -1,3 +1,11 @@
+/**
+This file manages article actions
+It contains the following features:
+  getArticle with either category name or user ID
+  createArticle with title, content
+  editArticle with article ID, title, content
+  deleteArticle with article ID
+*/
 var sessionManager = require("./session-manager");
 var promise = require('bluebird');
 var async = require('async');
@@ -204,7 +212,7 @@ exports.getArticle = function(req, res, pool){
         });
       }
       else{
-        var condition = {one: "uid = $1", two: uid};
+        var condition = {one: "uid = $1 ORDER BY datetime DESC", two: uid};
         getArticle(condition, pool, function(results){
           if(results=="error")
             res.status(500).send("Error");

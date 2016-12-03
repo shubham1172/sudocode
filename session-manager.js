@@ -1,3 +1,12 @@
+/**
+This file manages the session actions
+It contains the following features:
+  getHash with any string input
+  checkLogin with auth cookie
+  login with user ID and password
+  logout with auth cookie
+  checkId with user ID
+*/
 var crypto = require('crypto');
 
 function hash(input, salt) {

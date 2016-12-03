@@ -1,3 +1,7 @@
+/**
+This file is the main server file
+  It routes the urls to their respective managers.
+*/
 var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
@@ -6,7 +10,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var sessionManager = require('./session-manager.js');
 var articleManager = require('./article-manager.js');
-
+var commentManager = require('./comment-manager.js');
 var config = {
     user: 'postgres',
     database: 'postgres',
@@ -82,6 +86,26 @@ app.get('/get-articles', function(req, res){
 /** /edit-article/*/
 app.post('/edit-article', function(req, res){
   articleManager.editArticle(req,res,pool);
+});
+
+//comment management
+app.post('/create-comment', function(req, res){
+  commentManager.createComment(req,res,pool);
+});
+
+/** /delete-comment/?id=cid*/
+app.get('/delete-comment', function(req, res){
+  commentManager.deleteComment(req, res, pool);
+});
+
+/** /get-comments/?aid=123*/
+app.get('/get-comments', function(req, res){
+  commentManager.getComment(req,res,pool);
+});
+
+/** /edit-comment/*/
+app.post('/edit-comment', function(req, res){
+  commentManager.editComment(req,res,pool);
 });
 
 var port = 8082;
