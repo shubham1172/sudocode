@@ -7,6 +7,7 @@ It contains the following features:
   deleteArticle with article ID
 */
 var sessionManager = require("./session-manager");
+var commentManager = require("./comment-manager");
 var promise = require('bluebird');
 var async = require('async');
 
@@ -15,7 +16,14 @@ function getArticle(condition, pool, callback){
     return t.any("SELECT * FROM sudocode.articles WHERE " + condition.one, [condition.two]);
   })
   .then(function(results){
-    callback(results);
+    async.map(results, function(result, callback){
+      commentManager.getCommentsById(result.id, pool, function(res){
+        result.comments = res;
+        callback(null, result);
+      })
+    }, function(err, resultx){
+      callback(resultx);
+    });
   })
   .catch(function(error){
     console.log(error.toString());
@@ -198,29 +206,30 @@ exports.getArticle = function(req, res, pool){
     else if(isLogged=="error")
       res.status(500).send("error");
     else{
-      var category = req.query.category;
-      var uid = req.query.userId;
-      if(category === undefined && uid === undefined){
-        res.status(500).send("bad request");
-      }
-      else if(uid === undefined){
-        getArticleByCategory(category, pool, function(results){
-          if(results=="error")
-            res.status(500).send("Error");
-          else
-            res.status(200).send(results);
-        });
-      }
-      else{
-        var condition = {one: "uid = $1 ORDER BY datetime DESC", two: uid};
-        getArticle(condition, pool, function(results){
-          if(results=="error")
-            res.status(500).send("Error");
-          else
-            res.status(200).send(results);
-        });
-      }
-    }
+        var category = req.query.category;
+        var uid = req.query.userId;
+        if(category === undefined && uid === undefined){
+          res.status(500).send("bad request");
+        }
+        else if(uid === undefined){
+          getArticleByCategory(category, pool, function(results){
+            if(results=="error")
+              res.status(500).send("Error");
+            else
+              res.status(200).send(results);
+          });
+        }
+        else{
+          var condition = {one: "uid = $1 ORDER BY datetime DESC", two: uid};
+          getArticle(condition, pool, function(results){
+            if(results=="error")
+              res.status(500).send("Error");
+            else{
+              res.status(200).send(results);
+            }
+          });
+        }
+     }
   });
 }
 

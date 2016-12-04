@@ -11,6 +11,7 @@ var session = require('express-session');
 var sessionManager = require('./session-manager.js');
 var articleManager = require('./article-manager.js');
 var commentManager = require('./comment-manager.js');
+var categoryManager = require('./category-manager.js');
 var config = {
     user: 'postgres',
     database: 'postgres',
@@ -33,7 +34,7 @@ app.get('/', function(req,res){
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
 });
 
-//client script and css
+//front end files
 app.get('/ui/:fileName', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', req.params.fileName));
 });
@@ -64,8 +65,9 @@ app.get('/logout', function(req, res){
   sessionManager.logout(req,res,pool);
 });
 
-app.get('check-login', function(req, res){
-  sessionManager.checkUser(req, res, pool);
+/** /checkId/?id=xxx */
+app.get('/checkId', function(req, res){
+  sessionManager.checkId(req, res, pool);
 });
 
 //article management
@@ -106,6 +108,11 @@ app.get('/get-comments', function(req, res){
 /** /edit-comment/*/
 app.post('/edit-comment', function(req, res){
   commentManager.editComment(req,res,pool);
+});
+
+//category management
+app.get('/get-categories', function(req, res){
+  //categoryManager.getCategory(req,res,pool);
 });
 
 var port = 8082;
