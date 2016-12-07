@@ -81,3 +81,7 @@ input:focus ~ .bar:before, input:focus ~ .bar:after {
   font-size: 20px;
 
 }
+
+div.label{
+  align:center;
+}
