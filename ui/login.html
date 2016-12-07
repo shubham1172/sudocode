@@ -6,32 +6,33 @@
 		<link rel="shortcut icon" href="logo.ico" />
 
 		<!--stylesheets-->
-		<link rel="stylesheet" href="login.css">
+		<link rel="stylesheet" href="http://localhost:8082/ui/login.css">
 
 		<link rel="stylesheet" href="font-awesome-4.7.0\font-awesome-4.7.0\css\font-awesome.min.css">
 
 		<!--scripts-->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-		<script src="login.js"></script>
+		<script src="http://localhost:8082/ui/login.js"></script>
 
 
 </head>
 
 <body>
 	<div id="nav">
-	</div>
-<div id="loginscreen">
+	</div><br><br>
+<div id="loginscreen" align="center">
+	<div id = 'label' align="center">
+			Enter your ID.
+		</div>
 		<div id="loginbox"align="center">
-			<label>
-				Enter your ID.
-			</label><br><br><br>
+
 			<div id="loginform">
-				<form>
-				<input type="text" name="id" id="username">
+				<p id="loginforminner">
+				<input type="text" name="id" id="id">
 				<span class="bar" align="center"></span>
 				<br><br>
-			<input type="submit" name="button" value="Next" id="button">
-				</form>
+			<button type="submit" name="button" id="button">NEXT</button>
+			</p>
 			</div>
 
 		</div>
