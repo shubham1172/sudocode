@@ -19,7 +19,7 @@ $('#login').click(function(){
 //  $('#login').fadeTo('slow',0);
 
   $('#login').fadeTo('slow',100);
-  $('#text').load('login.html');
+  $('#text').load('http://localhost:8082/ui/login.html');
   document.getElementById('nav').innerHTML="<button id='login'> Back </button>";
 });
 
