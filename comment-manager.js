@@ -8,6 +8,7 @@ It contains the following features:
 */
 var sessionManager = require("./session-manager");
 var promise = require('bluebird');
+var sanitizer = require('sanitize-html');
 
 //if article exists or not
 function checkArticle(aid, pool, callback){
@@ -80,7 +81,7 @@ exports.createComment = function(req, res, pool){
       //Create comment
       var uid = req.session.auth.userId;
       var aid = req.body.articleId;
-      var content = req.body.content;
+      var content = sanitize(req.body.content, {allowedTags = []});
       if(aid==undefined||content.trim()=="")
         res.status(500).send("Bad request");
       else
@@ -111,7 +112,7 @@ exports.editComment = function(req, res, pool){
       //Create comment
       var uid = req.session.auth.userId;
       var cid = req.body.commentId;
-      var content = req.body.content;
+      var content = sanitize(req.body.content, {allowedTags: []});
       if(cid==undefined||content.trim()=="")
         res.status(500).send("Bad request");
       else

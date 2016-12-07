@@ -8,6 +8,8 @@ var path = require('path');
 var pgp = require('pg-promise')();
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var sanitizer = require('sanitize-html');
+var user = require('./user.js');
 var sessionManager = require('./session-manager.js');
 var articleManager = require('./article-manager.js');
 var commentManager = require('./comment-manager.js');
@@ -105,17 +107,41 @@ app.get('/get-comments', function(req, res){
   commentManager.getComment(req,res,pool);
 });
 
-/** /edit-comment/*/
 app.post('/edit-comment', function(req, res){
   commentManager.editComment(req,res,pool);
 });
 
 //category management
 app.get('/get-categories', function(req, res){
-  //categoryManager.getCategory(req,res,pool);
+  categoryManager.getCategory(req,res,pool);
+});
+
+app.get('/get-allowed-tags', function(req, res){
+  categoryManager.getAllowedTags(req,res,pool);
+});
+
+//user actions
+app.post('/set-username', function(req, res){
+  user.setUsername(req,res,pool);
+});
+
+app.post('/set-bio', function(req, res){
+  user.setBio(req,res,pool);
+});
+
+app.get('/get-username', function(req, res){
+  user.getUsername(req,res,pool);
+});
+
+app.get('/get-bio', function(req, res){
+  user.getBio(req,res,pool);
+});
+
+app.get('/get-user', function(req, res){
+  user.getUser(req,res,pool);
 });
 
 var port = 8082;
 app.listen(port, function(){
-  console.log('CHATBOT up and running on 8082!');
+  console.log('SUDOCODE up and running on 8082!');
 });

@@ -7,6 +7,7 @@ It contains the following features:
   deleteArticle with article ID
 */
 var sessionManager = require("./session-manager");
+var sanitizer = require('sanitize-html');
 var commentManager = require("./comment-manager");
 var promise = require('bluebird');
 var async = require('async');
@@ -167,8 +168,8 @@ exports.createArticle = function(req, res, pool){
     else {
       //Create article
       var uid = req.session.auth.userId;
-      var title = req.body.title;
-      var content = req.body.content;
+      var title = sanitize(req.body.title);
+      var content = sanitize(req.body.content);
       var categories = JSON.parse(req.body.categories);
       if(title.trim()==""||content.trim()==""||categories.length==0)
         res.status(500).send("Bad request");
@@ -225,11 +226,21 @@ exports.getArticle = function(req, res, pool){
             if(results=="error")
               res.status(500).send("Error");
             else{
-              res.status(200).send(results);
+              if(results.length==0)
+                res.send(200).send("Articles or user not found!");
+              else
+                res.status(200).send(results);
             }
           });
         }
      }
+  });
+}
+
+exports.getArticleByUser = function(userId, pool, callback){
+  var condition = {one: "uid = $1 ORDER BY datetime DESC", two: userId};
+  getArticle(condition, pool, function(results){
+    callback(results);
   });
 }
 
@@ -283,8 +294,8 @@ exports.editArticle = function(req, res, pool){
         .then(function(resultx){
             if(resultx[0].uid==uid){
                   //edit
-                  title = req.body.title;
-                  content = req.body.content;
+                  title = sanitize(req.body.title);
+                  content = sanitize(req.body.content);
                   categories = JSON.parse(req.body.categories);
                   if(title.trim()==""||content.trim()==""||categories.length==0)
                     res.status(500).send("Bad request");
