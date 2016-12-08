@@ -38,9 +38,12 @@ app.get('/', function(req,res){
 });
 
  //front end files
- //use case: www.host:port/ui/?filePath=fontawesome/test/sample.txt
+app.get('/ui/:fileName', function(req, res){
+    res.sendFile(path.join(__dirname, 'ui', req.params.fileName));
+});
+
+//use case: www.host:port/ui/?filePath=fontawesome/test/sample.txt
 app.get('/ui', function (req, res) {
-  console.log(path.join(__dirname, 'ui', req.query.filePath));
   res.sendFile(path.join(__dirname, 'ui', req.query.filePath));
 });
 
