@@ -25,6 +25,7 @@ var config = {
 var pool = pgp(config);
 
 var app = express();
+
 app.use(morgan('combined'));
   app.use(bodyParser.json());
 app.use(session({
@@ -36,9 +37,11 @@ app.get('/', function(req,res){
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
 });
 
-//front end files
-app.get('/ui/:fileName', function (req, res) {
-  res.sendFile(path.join(__dirname, 'ui', req.params.fileName));
+ //front end files
+ //use case: www.host:port/ui/?filePath=fontawesome/test/sample.txt
+app.get('/ui', function (req, res) {
+  console.log(path.join(__dirname, 'ui', req.query.filePath));
+  res.sendFile(path.join(__dirname, 'ui', req.query.filePath));
 });
 
 //jquery
