@@ -56,9 +56,9 @@ login.click(function(){
         //  console.log(request_login.responseText);
         $('#label').hide();
         document.getElementById('loginbox').innerHTML = request_login.responseText;
-        $('#text1').fadeTo('slow',0);
-        $('#text1').load('http://localhost:8082/ui/dashboard.html');
-        $('#text1').fadeTo('slow',100);
+        $('#loginscreen').fadeTo('slow',0);
+        $('#loginscreen').load('http://localhost:8082/ui/dashboard.html');
+        $('#loginscreen').fadeTo('slow',100);
 
         }
         else if(request_login.status===403){
