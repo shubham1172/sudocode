@@ -1,4 +1,4 @@
-var minHeight = 30; // Define a minimum height for the middle div
+var minHeight = 30;
 
 var resizeMiddle = function() {
     var h = $('#text').height() - $('#header').height() - $('#footer').height();
@@ -18,9 +18,9 @@ $(window).resize(resizeMiddle);
 $('#login').click(function(){
 //  $('#login').fadeTo('slow',0);
 
-  $('#login').fadeTo('slow',100);
+  $('#login').fadeTo('slow',0);
   $('#text').load('http://localhost:8082/ui/login.html');
-  document.getElementById('nav').innerHTML="<button id='login'> Back </button>";
+  $('#login').remove();
 });
 
 
