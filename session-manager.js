@@ -14,6 +14,10 @@ function hash(input, salt) {
     return ["pbkdf2", "10000", salt, hashed.toString('hex')].join('$').toString('hex')  ;
 }
 
+exports.hash = function(input, salt){
+    return hash(input, salt);
+}
+
 function isLogged(req, pool, callback){
   if(req.session && req.session.auth && req.session.auth.userId){
     pool.one('SELECT * FROM sudocode.users WHERE id = $1', [req.session.auth.userId])
