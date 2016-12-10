@@ -16,11 +16,13 @@ submit.click (function(){
     if(request_id.readystate = XMLHttpRequest.DONE){
       console.log('done2');
         if(request_id.status===200){
-
-          console.log(request_id.responseText);
+          var username = request_id.responseText;
+        //console.log(request_id.responseText);
         document.getElementById('label').innerHTML = request_id.responseText+ ', Enter your password.<br>';
         $('#loginform').load('http://localhost:8082/ui/loginpsk.html');
         document.getElementById('userid').innerHTML = id;
+        $("#userid").hide();
+
         }
         else{
           console.log("NOT DONE!")
@@ -51,8 +53,12 @@ login.click(function(){
       console.log('done_login2');
         if(request_login.status===200){
 
-          console.log(request_id.responseText);
+        //  console.log(request_login.responseText);
+        $('#label').hide();
         document.getElementById('loginbox').innerHTML = request_login.responseText;
+        $('#text1').fadeTo('slow',0);
+        $('#text1').load('http://localhost:8082/ui/dashboard.html');
+        $('#text1').fadeTo('slow',100);
 
         }
         else if(request_login.status===403){
@@ -68,9 +74,10 @@ login.click(function(){
   }
 
   var password = document.getElementById('password').value;
+//  hashedpsk = getHash(password);
   //var id = document.getElementById('userid').value;  do not uncomment this line.
   console.log(id);
-  console.log(password);
+  //console.log(hashedpsk);
   request_login.open('POST', 'http://localhost:8082/login', true);
   request_login.setRequestHeader('Content-Type', 'application/json');
   request_login.send(JSON.stringify({id: id, password: password}));
