@@ -81,7 +81,7 @@ exports.createComment = function(req, res, pool){
       //Create comment
       var uid = req.session.auth.userId;
       var aid = req.body.articleId;
-      var content = sanitize(req.body.content, {allowedTags = []});
+      var content = sanitize(req.body.content, {allowedTags: []});
       if(aid==undefined||content.trim()=="")
         res.status(500).send("Bad request");
       else

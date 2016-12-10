@@ -9,6 +9,7 @@ It contains the following features:
   getBio
   getUser
   deactivate
+  changePassword
 */
 var sessionManager = require("./session-manager");
 var articleManager = require("./article-manager");
@@ -148,5 +149,47 @@ exports.getUser = function(req, res, pool){
         console.log(error.toString());
         res.status(500).send("Error");
       });
+  });
+}
+
+exports.changePassword = function(req, res, pool){
+  sessionManager.checkLoginf(req, pool, function(isLogged){
+    if(isLogged=="false")
+      res.status(403).send("Login to change password");
+    else if(isLogged=="error")
+      res.status(500).send("Error");
+    else{
+        //change password
+        var old_password = req.body.old_password;
+        var new_password = req.body.new_password;
+        if(new_password==old_password)
+          req.status(500).send("New password cannot be same as the old one.");
+        else if(new_password.trim()=="" || old_password.trim()=="")
+          req.status(500).send("Bad password");
+        else{
+          //check with the old password
+          pool.one("SELECT password from sudocode.users WHERE id = $1", [req.session.auth.userId])
+          .then(function(password){
+            var salt = password.split('$')[2];
+            var old_hashed_password = sessionManager.hash(old_password, salt);
+            if(password!=old_hashed_password)
+              res.status(500).send("Invalid old password");
+            else{
+              var new_salt = crypto.randomBytes(128).toString('hex');
+              var new_hashed_password = sessionManager.hash(new_password, new_salt);
+              pool.one('UPDATE sudocode.users SET password = $1 OUTPUT INSERTED.id WHERE id = $1 AND password = $2', [new_hashed_password, req.session.auth.userId, old_hashed_password])
+              .then(function(data){
+                res.status(200).send("Password changed successfully for ID: " + data);
+              })
+              .catch(function(error){
+                res.status(500).send("Error");
+              });
+            }
+          })
+          .catch(function(error){
+            res.status(500).send("Error");
+          });
+        }
+      }
   });
 }

@@ -147,6 +147,10 @@ app.get('/get-user', function(req, res){
   user.getUser(req,res,pool);
 });
 
+app.post('/change-password', function(req, res){
+  user.changePassword(req,res,pool);
+});
+
 var port = 8082;
 app.listen(port, function(){
   console.log('SUDOCODE up and running on 8082!');
