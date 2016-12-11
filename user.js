@@ -3,18 +3,23 @@ This file manages user operations
 It contains the following features:
   setPhoto
   getPhoto
+  removePhoto
   setUsername
   getUsername
   setBio
   getBio
+  removeBio
   getUser
-  deactivate
+  deactivate //requires password
   changePassword
 */
 var sessionManager = require("./session-manager");
 var articleManager = require("./article-manager");
 var sanitizer = require('sanitize-html');
 var crypto = require('crypto');
+var path = require('path');
+var fs = require('file-system');
+var imageParser = require('base64-img');
 
 function checkUsernameAvailable(obj, callback){
   //obj has username and pool
@@ -132,6 +137,25 @@ exports.getBio = function(req, res, pool){
   });
 }
 
+exports.removeBio = function(req, res, pool){
+  sessionManager.checkLoginf(req, pool, function(isLogged){
+    if(isLogged=="false")
+      res.status(403).send("Login to remove bio");
+    else if(isLogged=="error")
+      res.status(500).send("Error");
+    else
+      pool.one("UPDATE sudocode.users SET bio = $1 WHERE id = $2 RETURNING id", [null, req.session.auth.userId])
+      .then(function(results){
+        res.status(200).send("Removed bio");
+      })
+      .catch(function(error){
+        console.log(error.toString());
+        res.status(500).send("Error");
+      });
+  });
+
+}
+
 exports.getUser = function(req, res, pool){
   sessionManager.checkLoginf(req, pool, function(isLogged){
     if(isLogged=="false")
@@ -171,7 +195,7 @@ exports.changePassword = function(req, res, pool){
           //check with the old password
           pool.one("SELECT * from sudocode.users WHERE id = $1", [req.session.auth.userId])
           .then(function(data){
-            password = data.password.toString();
+            var password = data.password.toString();
             var salt = password.split('$')[2];
             var old_hashed_password = sessionManager.hash(old_password, salt);
             if(password!=old_hashed_password)
@@ -195,5 +219,105 @@ exports.changePassword = function(req, res, pool){
           });
         }
       }
+  });
+}
+
+exports.deactivate = function(req, res, pool){
+  sessionManager.checkLoginf(req, pool, function(isLogged){
+    if(isLogged=="false")
+      res.status(403).send("Login to deactivate");
+    else if(isLogged=="error")
+      res.status(500).send("Error");
+    else{
+      var password = req.body.password;
+      console.log(password);
+      if(password.trim()=="")
+        res.status(500).send("Bad request");
+      else{
+        pool.one('SELECT * FROM sudocode.users WHERE id = $1', [req.session.auth.userId])
+          .then(function(data){
+            var dBPassword = data.password.toString();
+            var salt = dBPassword.split('$')[2];
+            var hashed_password = sessionManager.hash(password, salt);
+            if(hashed_password==dBPassword)
+              pool.one('UPDATE sudocode.users SET state = $1 WHERE id = $2 AND state = $3 RETURNING id', [false , req.session.auth.userId, true])
+              .then(function(){
+                res.status(200).send("Deactivated successfully");
+              })
+              .catch(function(error){
+                //already deactivated
+                console.log(error.toString());
+                res.status(500).send("Already deactivated");
+              });
+            else
+              res.status(500).send("Invalid password");
+          })
+          .catch(function(error){
+            console.log(error.toString());
+            res.status(500).send("Error");
+          });
+      }
+    }
+  });
+}
+
+exports.getPhoto = function(req, res, pool){
+  sessionManager.checkLoginf(req, pool, function(isLogged){
+    if(isLogged=="false")
+      res.status(403).send("Login to get photo");
+    else if(isLogged=="error")
+      res.status(500).send("Error");
+    else if(req.query.id==undefined){
+        var fileName = req.session.auth.userId + ".jpg";
+        res.sendFile(path.join(__dirname, 'profile', fileName), function(err){
+          res.sendFile(path.join(__dirname, 'profile', 'default.jpg'));
+        });
+      }
+    else{
+      var fileName = req.query.id + ".jpg";
+      res.sendFile(path.join(__dirname, 'profile', fileName), function(err){
+        res.sendFile(path.join(__dirname, 'profile', 'default.jpg'));
+      });
+    }
+  });
+}
+
+exports.setPhoto = function(req, res, pool){
+  sessionManager.checkLoginf(req, pool, function(isLogged){
+    if(isLogged=="false")
+      res.status(403).send("Login to set photo");
+    else if(isLogged=="error")
+      res.status(500).send("Error");
+    else{
+      var path_write = path.join(__dirname, 'profile');
+      var data = req.body.photo;
+      var photo = imageParser.img(data, path_write, req.session.auth.userId, function(err, filepath){
+      if(err){
+        console.log(err.toString());
+        res.status(500).send("Error");
+      }else{
+        res.status(200).send("UPDATED");
+      }
+    });
+    }
+  });
+}
+
+exports.removePhoto = function(req, res, pool){
+  sessionManager.checkLoginf(req, pool, function(isLogged){
+    if(isLogged=="false")
+      res.status(403).send("Login to remove photo");
+    else if(isLogged=="error")
+      res.status(500).send("Error");
+    else{
+      var path_photo = path.join(__dirname, 'profile', req.session.auth.userId+".jpg");
+      fs.unlink(path_photo, function(err){
+        if(err){
+          console.log(err.toString());
+          res.status(500).send("Error");
+        }else
+        res.status(200).send("Removed");
+      });
+    }
   });
 }

@@ -27,7 +27,7 @@ var pool = pgp(config);
 var app = express();
 
 app.use(morgan('combined'));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({limit: '5mb'}));
 app.use(session({
     secret: 'someRandomSecretValue',
     cookie: {maxAge: 1000*60*60}
@@ -135,6 +135,18 @@ app.post('/set-bio', function(req, res){
   user.setBio(req,res,pool);
 });
 
+app.post('/set-photo', function(req, res){
+  user.setPhoto(req,res,pool);
+});
+
+app.get('/remove-photo', function(req, res){
+  user.removePhoto(req,res,pool);
+});
+
+app.get('/remove-bio', function(req, res){
+  user.removeBio(req,res,pool);
+});
+
 app.get('/get-username', function(req, res){
   user.getUsername(req,res,pool);
 });
@@ -147,8 +159,17 @@ app.get('/get-user', function(req, res){
   user.getUser(req,res,pool);
 });
 
+//returns self photo by default or ?id=xxx
+app.get('/get-photo', function(req, res){
+  user.getPhoto(req,res,pool);
+});
+
 app.post('/change-password', function(req, res){
   user.changePassword(req,res,pool);
+});
+
+app.post('/deactivate', function(req, res){
+    user.deactivate(req, res, pool);
 });
 
 var port = 8082;
