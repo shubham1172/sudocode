@@ -3,42 +3,65 @@
 $(document).ready(function(){
 
 var submit = $('#button');
-submit.click (function(){
-  id = document.getElementById('id').value;
-  document.getElementById('userid').innerHTML = id;
-  //Make request
-  console.log('click')
-  var request_id = new XMLHttpRequest();
-  //request.responseType = "text";
-  //Response;
-  request_id.onload = function(){
-    console.log('done1')
-    if(request_id.readystate = XMLHttpRequest.DONE){
-      console.log('done2');
-        if(request_id.status===200){
-          var username = request_id.responseText;
-        //console.log(request_id.responseText);
-        document.getElementById('label').innerHTML = request_id.responseText+ ', Enter your password.<br>';
-        $('#loginform').load('http://localhost:8082/ui/loginpsk.html');
-        document.getElementById('userid').innerHTML = id;
-        $("#userid").hide();
 
+submit.click (function(){
+  var checklogger = new XMLHttpRequest();
+  checklogger.onload = function(){
+    console.log('done1')
+    if(checklogger.readystate = XMLHttpRequest.DONE){
+      console.log('done2');
+        if(checklogger.status===403){
+          id = document.getElementById('id').value;
+          document.getElementById('userid').innerHTML = id;
+          //Make request
+        //  console.log('click')
+          var request_id = new XMLHttpRequest();
+          //request.responseType = "text";
+          //Response;
+          request_id.onload = function(){
+            console.log('done1')
+            if(request_id.readystate = XMLHttpRequest.DONE){
+              console.log('done2');
+                if(request_id.status===200){
+                  var username = request_id.responseText;
+                //console.log(request_id.responseText);
+                document.getElementById('label').innerHTML = request_id.responseText+ ', Enter your password.<br>';
+                $('#loginform').load('http://localhost:8082/ui/loginpsk.html');
+                document.getElementById('userid').innerHTML = id;
+                $("#userid").hide();
+
+                }
+                else{
+                  console.log("NOT DONE!")
+                }
+
+            }
+          }
+
+
+
+          console.log(id);
+          request_id.open('GET','http://localhost:8082/checkId/?id='+id,true);
+          request_id.send(null);
         }
+
+        else if(checklogger.status===500){
+          document.getElementById('dashmsg').innerHTML = 'Server Error';
+        }
+
+
         else{
-          console.log("NOT DONE!")
+            $('#loginscreen').load('http://localhost:8082/ui/dashboard.html');
         }
 
     }
-  }
+
+}
+    checklogger.open('GET','http://localhost:8082/check-login/',true);
+    checklogger.send(null);
 
 
-
-  console.log(id);
-  request_id.open('GET','http://localhost:8082/checkId/?id='+id,true);
-  request_id.send(null);
 });
-
-
 
 //logging in
 var login = $('#loginbutton');
@@ -82,8 +105,6 @@ login.click(function(){
   request_login.setRequestHeader('Content-Type', 'application/json');
   request_login.send(JSON.stringify({id: id, password: password}));
 });
-
-
-
+//loggin the user in.
 
 });
