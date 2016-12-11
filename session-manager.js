@@ -41,7 +41,7 @@ exports.getHash = function(req, res){
   res.send(hashedString);
 }
 
-exports.checkLogin = function(req, res, pool){
+exports.checkLogin = function(req, res, pool){ //front end done.
   isLogged(req, pool, function(result){
     if(result=="false"){
       res.status(403).send("false");
@@ -65,7 +65,7 @@ exports.checkLoginf = function(req, pool, callback){
   });
 }
 
-exports.login =  function(req, res, pool) {
+exports.login =  function(req, res, pool) {  //front end done
    var id = req.body.id;
    var password = req.body.password;
    pool.task(function(t){
@@ -105,7 +105,7 @@ exports.logout = function(req, res, pool){
   });
 }
 
-exports.checkId = function(req, res, pool){
+exports.checkId = function(req, res, pool){ //font end done
   pool.one("SELECT * FROM sudocode.users WHERE id = $1", [req.query.id])
     .then(function(result){
       res.status(200).send(result.username);
