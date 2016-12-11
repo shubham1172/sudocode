@@ -52,7 +52,7 @@ submit.click (function(){
 
         else{
             $('#loginscreen').load('http://localhost:8082/ui/dashboard.html');
-            $('#menu').html('<span class="dropdown"><i class="fa fa-user-o" aria-hidden="true" id="logout" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-menu-left"></i><span class="dropdown-menu" aria-labelledby="dLabel"> <span id="settings">Settings</span><br> <span id="logoutbtn">Logout</span></span>  <i class="fa fa-home" aria-hidden="true" id="home"></i>  <i class="fa fa-coffee" aria-hidden="true" id="categories"></i>')
+            $('#menu').html(' <span class="dropdown"><i class="fa fa-user-o" aria-hidden="true" id="logout" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-menu-left"></i><span class="dropdown-menu" aria-labelledby="dLabel"> <span id="settings">Settings</span><br> <span id="logoutbtn">Logout</span></span>  <i class="fa fa-home" aria-hidden="true" id="home"></i>  <i class="fa fa-coffee" aria-hidden="true" id="categories"></i>')
         }
 
     }
@@ -82,7 +82,7 @@ login.click(function(){
         document.getElementById('loginbox').innerHTML = request_login.responseText;
         $('#loginscreen').fadeTo('slow',0);
         $('#loginscreen').load('http://localhost:8082/ui/dashboard.html');
-        $('#menu').html('<span class="dropdown"><i class="fa fa-user-o" aria-hidden="true" id="logout" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-menu-left"></i><ul class="dropdown-menu" aria-labelledby="dLabel"><li>Settings</li><li>Logout</li></ul></span>  <i class="fa fa-home" aria-hidden="true" id="home"></i>  <i class="fa fa-coffee" aria-hidden="true" id="categories"></i>')
+        $('#menu').html(' <span class="dropdown"><i class="fa fa-user-o" aria-hidden="true" id="logout" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-menu-left"></i><span class="dropdown-menu" aria-labelledby="dLabel"> <span id="settings">Settings</span><br> <span id="logoutbtn">Logout</span></span>  <i class="fa fa-home" aria-hidden="true" id="home"></i>  <i class="fa fa-coffee" aria-hidden="true" id="categories"></i>')
         $('#loginscreen').fadeTo('slow',100);
 
         }
