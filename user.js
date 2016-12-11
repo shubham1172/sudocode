@@ -14,6 +14,7 @@ It contains the following features:
 var sessionManager = require("./session-manager");
 var articleManager = require("./article-manager");
 var sanitizer = require('sanitize-html');
+var crypto = require('crypto');
 
 function checkUsernameAvailable(obj, callback){
   //obj has username and pool
@@ -163,13 +164,14 @@ exports.changePassword = function(req, res, pool){
         var old_password = req.body.old_password;
         var new_password = req.body.new_password;
         if(new_password==old_password)
-          req.status(500).send("New password cannot be same as the old one.");
+          res.status(500).send("New password cannot be same as the old one.");
         else if(new_password.trim()=="" || old_password.trim()=="")
-          req.status(500).send("Bad password");
+          res.status(500).send("Bad password");
         else{
           //check with the old password
-          pool.one("SELECT password from sudocode.users WHERE id = $1", [req.session.auth.userId])
-          .then(function(password){
+          pool.one("SELECT * from sudocode.users WHERE id = $1", [req.session.auth.userId])
+          .then(function(data){
+            password = data.password.toString();
             var salt = password.split('$')[2];
             var old_hashed_password = sessionManager.hash(old_password, salt);
             if(password!=old_hashed_password)
@@ -177,16 +179,18 @@ exports.changePassword = function(req, res, pool){
             else{
               var new_salt = crypto.randomBytes(128).toString('hex');
               var new_hashed_password = sessionManager.hash(new_password, new_salt);
-              pool.one('UPDATE sudocode.users SET password = $1 OUTPUT INSERTED.id WHERE id = $1 AND password = $2', [new_hashed_password, req.session.auth.userId, old_hashed_password])
+              pool.one('UPDATE sudocode.users SET "password" = $1 WHERE "id" = $2 AND "password" = $3 RETURNING "id"', [new_hashed_password, req.session.auth.userId, old_hashed_password])
               .then(function(data){
-                res.status(200).send("Password changed successfully for ID: " + data);
+                res.status(200).send("Password changed successfully");
               })
               .catch(function(error){
+                console.log(error.toString());
                 res.status(500).send("Error");
               });
             }
           })
           .catch(function(error){
+            console.log(error.toString());
             res.status(500).send("Error");
           });
         }

@@ -34,7 +34,7 @@ app.use(session({
 }));
 
 app.get('/', function(req,res){
-  res.sendFile(path.join(__dirname, 'ui', 'index.html'));
+  sessionManager.returnIndex(req, res, pool);
 });
 
  //front end files

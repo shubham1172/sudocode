@@ -8,6 +8,7 @@ It contains the following features:
   checkId with user ID
 */
 var crypto = require('crypto');
+var path = require('path');
 
 function hash(input, salt) {
     var hashed = crypto.pbkdf2Sync(input, salt, 10000, 512, 'sha512');
@@ -34,6 +35,17 @@ function isLogged(req, pool, callback){
   }
 }
 
+exports.returnIndex = function(req,res,pool){
+  isLogged(req, pool, function(status){
+    if(status=="false")
+      res.sendFile(path.join(__dirname, 'ui', 'index.html'));
+    else if(status=="error")
+      res.status(500).send("error");
+    else
+      res.sendFile(path.join(__dirname, 'ui', 'dashboard.html'));
+  });
+}
+
 exports.getHash = function(req, res){
   var input = req.params.input;
   var salt = crypto.randomBytes(128).toString('hex');
@@ -41,7 +53,7 @@ exports.getHash = function(req, res){
   res.send(hashedString);
 }
 
-exports.checkLogin = function(req, res, pool){ //front end done.
+exports.checkLogin = function(req, res, pool){
   isLogged(req, pool, function(result){
     if(result=="false"){
       res.status(403).send("false");
@@ -65,7 +77,7 @@ exports.checkLoginf = function(req, pool, callback){
   });
 }
 
-exports.login =  function(req, res, pool) {  //front end done
+exports.login =  function(req, res, pool) {
    var id = req.body.id;
    var password = req.body.password;
    pool.task(function(t){
@@ -105,7 +117,7 @@ exports.logout = function(req, res, pool){
   });
 }
 
-exports.checkId = function(req, res, pool){ //font end done
+exports.checkId = function(req, res, pool){
   pool.one("SELECT * FROM sudocode.users WHERE id = $1", [req.query.id])
     .then(function(result){
       res.status(200).send(result.username);
