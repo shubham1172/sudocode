@@ -25,14 +25,14 @@ submit.click (function(){
                 if(request_id.status===200){
                   var username = request_id.responseText;
                 //console.log(request_id.responseText);
-                document.getElementById('label').innerHTML = request_id.responseText+ ', Enter your password.<br>';
+                document.getElementById('label').innerHTML = '<span id="un">'+request_id.responseText+'</span>'+ ',<span id="txt"> Enter your password.<br></span>';
                 $('#loginform').load('http://localhost:8082/ui/loginpsk.html');
                 document.getElementById('userid').innerHTML = id;
                 $("#userid").hide();
 
                 }
                 else{
-                  console.log("NOT DONE!")
+                    document.getElementById('label').innerHTML ='<span style="color:red">Enter valid ID</span>';
                 }
 
             }
@@ -52,6 +52,7 @@ submit.click (function(){
 
         else{
             $('#loginscreen').load('http://localhost:8082/ui/dashboard.html');
+            $('#menu').html('<span class="dropdown"><i class="fa fa-user-o" aria-hidden="true" id="logout" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-menu-left"></i><span class="dropdown-menu" aria-labelledby="dLabel"> <span id="settings">Settings</span><br> <span id="logoutbtn">Logout</span></span>  <i class="fa fa-home" aria-hidden="true" id="home"></i>  <i class="fa fa-coffee" aria-hidden="true" id="categories"></i>')
         }
 
     }
@@ -81,12 +82,13 @@ login.click(function(){
         document.getElementById('loginbox').innerHTML = request_login.responseText;
         $('#loginscreen').fadeTo('slow',0);
         $('#loginscreen').load('http://localhost:8082/ui/dashboard.html');
+        $('#menu').html('<span class="dropdown"><i class="fa fa-user-o" aria-hidden="true" id="logout" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-menu-left"></i><ul class="dropdown-menu" aria-labelledby="dLabel"><li>Settings</li><li>Logout</li></ul></span>  <i class="fa fa-home" aria-hidden="true" id="home"></i>  <i class="fa fa-coffee" aria-hidden="true" id="categories"></i>')
         $('#loginscreen').fadeTo('slow',100);
 
         }
         else if(request_login.status===403){
-          console.log("NOT DONE!")
-        document.getElementById('loginbox').innerHTML = request_login.responseText;
+
+        document.getElementById('txt').innerHTML = '<span style="color:red"> Enter a valid Password.</span>';
         }
         else if(request_login.status===500){
         //console.log(id);

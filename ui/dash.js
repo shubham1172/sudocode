@@ -23,6 +23,10 @@ $(document).ready(function(){
     request_username.open('GET','http://localhost:8082/check-login/',true);
     request_username.send(null);
 
+$('#dropdown').click(function(){
+  $('.dropdown-toggle').dropdown();
+});
+
 
 
 });
