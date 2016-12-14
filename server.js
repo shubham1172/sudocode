@@ -10,6 +10,8 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var sanitizer = require('sanitize-html');
 var user = require('./user.js');
+var voter = require("./voter.js");
+var search = require("./search.js");
 var sessionManager = require('./session-manager.js');
 var articleManager = require('./article-manager.js');
 var commentManager = require('./comment-manager.js');
@@ -169,7 +171,27 @@ app.post('/change-password', function(req, res){
 });
 
 app.post('/deactivate', function(req, res){
-    user.deactivate(req, res, pool);
+    user.deactivate(req,res,pool);
+});
+
+//can be used as /vote/?aid=xx&value=#
+app.get('/vote', function(req, res){
+    voter.vote(req,res,pool);
+});
+
+//can be used as /delete-vote/?aid=xx
+app.get('/delete-vote', function(req, res){
+  voter.deleteVote(req,res,pool);
+});
+
+//can be used as /get-vote/?aid=xx
+app.get('/get-vote', function(req, res){
+  voter.getVote(req,res,pool);
+});
+
+//can be used as /search/?q=xxxyyy
+app.get('/search', function(req, res){
+  search.searchQuery(req,res,pool);
 });
 
 var port = 8082;

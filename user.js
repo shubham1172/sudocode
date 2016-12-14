@@ -99,7 +99,7 @@ exports.setBio = function(req, res, pool){
     else if(isLogged=="error")
       req.status(500).send("Error");
     else{
-      var bio = sanitize(req.body.bio);
+      var bio = sanitizer(req.body.bio);
       var id = req.session.auth.userId;
       if(bio.trim()=="")
         res.status(500).send("Empty bio");
@@ -163,7 +163,7 @@ exports.getUser = function(req, res, pool){
     else if(isLogged=="error")
       res.status(500).send("Error");
     else
-      pool.one("SELECT id,username,bio,photo FROM sudocode.users WHERE id = $1 AND state = true", [req.session.auth.userId])
+      pool.one("SELECT id,username,bio FROM sudocode.users WHERE id = $1 AND state = true", [req.session.auth.userId])
       .then(function(results){
         articleManager.getArticleByUser(req.session.auth.userId, pool, function(articles){
           results.articles = articles;
@@ -185,8 +185,8 @@ exports.changePassword = function(req, res, pool){
       res.status(500).send("Error");
     else{
         //change password
-        var old_password = req.body.old_password;
-        var new_password = req.body.new_password;
+        var old_password = sanitizer(req.body.old_password, {allowedTags: []});
+        var new_password = sanitizer(req.body.new_password, {allowedTags: []});
         if(new_password==old_password)
           res.status(500).send("New password cannot be same as the old one.");
         else if(new_password.trim()=="" || old_password.trim()=="")
