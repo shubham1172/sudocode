@@ -35,17 +35,6 @@ function isLogged(req, pool, callback){
   }
 }
 
-exports.returnIndex = function(req,res,pool){
-  isLogged(req, pool, function(status){
-    if(status=="false")
-      res.sendFile(path.join(__dirname, 'ui', 'index.html'));
-    else if(status=="error")
-      res.status(500).send("error");
-    else
-      res.sendFile(path.join(__dirname, 'ui', 'dashboard.html'));
-  });
-}
-
 exports.getHash = function(req, res){
   var input = req.params.input;
   var salt = crypto.randomBytes(128).toString('hex');
