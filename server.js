@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var sanitizer = require('sanitize-html');
 var user = require('./user.js');
+var feed = require("./feed.js");
 var voter = require("./voter.js");
 var search = require("./search.js");
 var sessionManager = require('./session-manager.js');
@@ -36,7 +37,7 @@ app.use(session({
 }));
 
 app.get('/', function(req,res){
-  sessionManager.returnIndex(req, res, pool);
+  res.sendFile(path.join(__dirname, 'ui', 'index.html'));
 });
 
  //front end files
@@ -192,6 +193,10 @@ app.get('/get-vote', function(req, res){
 //can be used as /search/?q=xxxyyy
 app.get('/search', function(req, res){
   search.searchQuery(req,res,pool);
+});
+
+app.get('/get-feed', function(req, res){
+  feed.getArticles(req,res,pool);
 });
 
 var port = 8082;
