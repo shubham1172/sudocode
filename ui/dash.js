@@ -1,4 +1,4 @@
-var Handlebars = require('handlebars');
+
 $(document).ready(function(){
 
   //Get Username
@@ -43,7 +43,7 @@ $('#categories').click(function(){
 
         var data = request_categories.responseText;
         if(request_categories.status===200||request_categories.status===304){
-          //mustache text 
+
         }
 
         else if(request_categories.status===500){
