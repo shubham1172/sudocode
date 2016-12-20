@@ -15,11 +15,11 @@ exports.getCategory = function(req, res, pool){
       else{
         pool.any("SELECT name FROM sudocode.categories ORDER BY name ASC")
           .then(function(results){
-            var response = {categories: []};
+            var categories = []
             for(var x=0;x<results.length;x++){
-              response.categories.push({name: results[x].name});
+              categories.push(results[x].name);
             }
-            res.status(200).send(JSON.stringify(response));
+            res.status(200).send(JSON.stringify(categories));
           })
           .catch(function(error){
             console.log(error.toString());
