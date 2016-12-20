@@ -42,13 +42,17 @@ function getArticle(condition, pool, callback){
 function getArticleByCategory(category, pool, callback){
   pool.any("SELECT aid FROM sudocode.\"article-categories\" WHERE category = $1", [category[0].toUpperCase() + category.toLowerCase().substring(1)])
   .then(function(result){
-    for(var x=0;x<result.length;x++){
-        result[x] = parseInt(result[x].aid, 10);
+    if(result.length==0)
+      callback("empty");
+    else{
+      for(var x=0;x<result.length;x++){
+          result[x] = parseInt(result[x].aid, 10);
+      }
+      var condition = {one:"id = ANY($1) ORDER BY datetime DESC", two: result};
+      getArticle(condition, pool, function(resultx){
+        callback(resultx);
+      });
     }
-    var condition = {one:"id = ANY($1) ORDER BY datetime DESC", two: result};
-    getArticle(condition, pool, function(resultx){
-      callback(resultx);
-    });
   })
   .catch(function(error){
     console.log(error.toString());
@@ -223,6 +227,8 @@ exports.getArticle = function(req, res, pool){
           getArticleByCategory(category, pool, function(results){
             if(results=="error")
               res.status(500).send("Error");
+            else if(results=="empty")
+              res.status(200).send("Articles or category not found");
             else
               res.status(200).send(results);
           });
