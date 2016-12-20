@@ -45,7 +45,7 @@ $('#categories').click(function(){
         if(request_categories.status===200||request_categories.status===304){
             var data = JSON.parse(request_categories.responseText);
             for(var x=0;x<data.length;x++){
-              $('#dashbody').append('<div class="categories_tab" id="temp_id"><span>'+data[x]+'</span></div>');
+              $('#dashbody').append('<div class="categories_tab" id="temp_id"><span>'+'#'+data[x]+'</span></div>');
               $('#temp_id').attr('id',data[x]);
             }
 
@@ -83,7 +83,7 @@ $('#categories').click(function(){
 
 
 
-$('.categories_tab').click(function(){
+$(this).on("click", ".categories_tab", function(){
     console.log('clicked_categories');
     console.log(this.id);
     var request_article_by_categories = new XMLHttpRequest();
