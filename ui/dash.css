@@ -24,3 +24,16 @@
   color: #F2F2F2;
   cursor: hand;
 }
+
+
+#post{
+  background-color: #F2F2F2;
+  height: 150px;
+  width: 500px;
+}
+
+
+#postinput{
+  width:450px;
+  heigth:300px;
+}
