@@ -29,6 +29,20 @@ exports.getCategory = function(req, res, pool){
   });
 }
 
+exports.getCategoriesByArticle = function(aid, pool, callback){
+  pool.many("SELECT category FROM sudocode.\"article-categories\" WHERE aid=$1", aid)
+    .then(function(results){
+      var response = [];
+      for(var x=0;x<results.length;x++)
+        response.push(results[x].category);
+      callback(response);
+    })
+    .catch(function(err){
+      console.log(err.toString());
+      callback("error");
+    });
+}
+
 exports.getAllowedTags = function(req, res, pool){
   sessionManager.checkLoginf(req, pool, function(isLogged){
       if(isLogged=='false')

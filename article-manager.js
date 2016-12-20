@@ -8,6 +8,7 @@ It contains the following features:
 */
 var sessionManager = require("./session-manager");
 var sanitizer = require('sanitize-html');
+var categoryManager = require("./category-manager")
 var commentManager = require("./comment-manager");
 var promise = require('bluebird');
 var async = require('async');
@@ -20,10 +21,16 @@ function getArticle(condition, pool, callback){
     async.map(results, function(result, callback){
       commentManager.getCommentsById(result.id, pool, function(res){
         result.comments = res;
-        callback(null, result);
-      })
+        categoryManager.getCategoriesByArticle(result.id, pool, function(resX){
+          result.categories = resX;
+          callback(null, result)
+        });
+      });
     }, function(err, resultx){
-      callback(resultx);
+      if(err)
+        callback("error");
+      else
+        callback(resultx);
     });
   })
   .catch(function(error){
@@ -227,7 +234,7 @@ exports.getArticle = function(req, res, pool){
               res.status(500).send("Error");
             else{
               if(results.length==0)
-                res.send(200).send("Articles or user not found!");
+                res.status(200).send("Articles or user not found!");
               else
                 res.status(200).send(results);
             }
