@@ -49,6 +49,7 @@ $('#categories').click(function(){
               $('#dashbody').append('<div class="categories_tab" id="temp_id"><span>'+'#'+data[x]+'</span></div>');
               $('#temp_id').attr('id',data[x]);
             }
+            $('#categories').remove();
 
         }
 
