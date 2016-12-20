@@ -41,8 +41,13 @@ $('#categories').click(function(){
 
       if(request_categories.readystate = XMLHttpRequest.DONE){
 
-        var data = request_categories.responseText;
+
         if(request_categories.status===200||request_categories.status===304){
+            var data = JSON.parse(request_categories.responseText);
+            for(var x=0;x<data.length;x++){
+              $('#dashbody').append('<div class="categories_tab" id="temp_id"><span>'+data[x]+'</span></div>');
+              $('#temp_id').attr('id',data[x]);
+            }
 
         }
 
@@ -74,6 +79,38 @@ $('#categories').click(function(){
 
 
 });
+
+
+
+
+$('.categories_tab').click(function(){
+    console.log('clicked_categories');
+    console.log(this.id);
+    var request_article_by_categories = new XMLHttpRequest();
+
+    request_article_by_categories.onload = function(){
+      if(request_article_by_categories.readystate = XMLHttpRequest.DONE){
+
+        if(request_article_by_categories.status===200){
+          console.log(request_article_by_categories.responseText);
+
+        }
+
+        else if(request_article_by_categories.status===500){
+          console.log('Server Error');
+        }
+
+      }
+    }
+
+    var art_id = this.id;
+    request_article_by_categories.open('GET','http://localhost:8082/get-articles/?category='+art_id,true);
+    request_article_by_categories.send(null);
+
+
+    });
+
+
 
 
 
