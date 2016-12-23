@@ -25,15 +25,58 @@
   cursor: hand;
 }
 
-
 #post{
   background-color: #F2F2F2;
-  height: 150px;
-  width: 500px;
+  display: inline-block;
+  width: 600px;
+  height: 200px;
+  position: relative;
+
 }
 
 
+
+#postbutton{
+  padding: 5px 5px 20px 5px;
+  width: 100px;
+  height: 40px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin-top: 0;
+}
+
+
+
 #postinput{
-  width:450px;
-  heigth:300px;
+  width: 450px;
+  heigth: 200px;
+  border: 0px;
+}
+
+#postcategory{
+  padding: 5px 5px 20px 5px;
+  display: inline-block;
+  height: 40px;
+  position: absolute;
+  right: 110;
+  bottom: 0;
+  margin: 10px;
+  background-color:transparent;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  cursor: pointer;
+	border:2px solid #4CAF50;
+	font-family: courier;
+	font-weight:bold;
+	color:green;
+  border-radius: 0px;
+}
+
+
+.categoriesdrop:hover{
+  background-color: green;
+  color: white;
+  cursor: hand;
 }

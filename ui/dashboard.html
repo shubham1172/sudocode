@@ -7,24 +7,34 @@
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<script type="text/javascript" src="http://localhost:8082/ui/jqueryindex.js"></script>
 		<script type="text/javascript" src="http://localhost:8082/ui/dash.js"></script>
-		<script type="text/javascript" src="http://localhost:8082/ui/mustache.js" ></script>
+
 
 		<link rel="shortcut icon" href="logo.ico" />
 		<link rel="stylesheet" href="http://localhost:8082/ui/?filePath=font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css">
 		<meta name="viewport" content="width=device-width">
 </head>
 <body>
-  <div id="dashmsg">
+
+<div id="dashmsg">
 		Welcome.
-    </div>
-		<div id="dashbody"><br><br>
-			<div id="post"><br>
-			<textarea type="text" value="post" id="postinput" placeholder="Enter new post" style="overflow:visible">
-			</textarea><br>
+</div><br>
 
+<div id="post"><br>
+	<input type="text" placeholder="Title" id="title" style="width:200px; height:30px; font-size:18px; background-color:transparent"><br>
+		<textarea type="text" value="post" id="postinput" placeholder="Enter new post" style="overflow:visible; text-align: left">
+		</textarea><br>
+		<button type="submit" name="post" id="postbutton">POST</button>
+		<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="postcategory">CAT
+  <span class="caret"></span></button>
+	<ul class="dropdown-menu dropdown-menu-right" id="catdrop">
 
-	</div>
-		</div>
+  </ul>
+
+</div>
+
+<div id="dashbody"><br><br>
+
+</div>
 
 </body>
 </html>

@@ -50,7 +50,7 @@ $('#categories').click(function(){
               $('#temp_id').attr('id',data[x]);
             }
             $('#categories').remove();
-
+            $('#post').remove();
         }
 
         else if(request_categories.status===500){
@@ -115,11 +115,79 @@ $(this).on("click", ".categories_tab", function(){
 
 
 
+$('#postcategory').click(function(){
+
+      var request_categories = new XMLHttpRequest();
+      request_categories.onload = function(){
+
+          if(request_categories.readystate = XMLHttpRequest.DONE){
+
+
+            if(request_categories.status===200||request_categories.status===304){
+                var data = JSON.parse(request_categories.responseText);
+                for(var x=0;x<data.length;x++){
+                  $('#catdrop').append('<li class="categoriesdrop" id="temp_id1"><span>'+data[x]+'</span></li>');
+                  $('#temp_id1').attr('id',data[x]);
+                }
+                $('.categoriesdrop').click(function(){
+                  categories = this.id;
+                  $('#postcategory').html("#"+this.id+" "+'<span class="caret"></span>');
+                  $('#catdrop').remove();
+                  $('#post').append('<ul class="dropdown-menu dropdown-menu-right" id="catdrop"></ul>')
+                });
+            }
+
+            else if(request_categories.status===500){
+
+              $('#dashbody').append('<div/>',{
+                id: 'error',
+                text: 'Error loading categories, try again later!'
+              });
+
+            }
+
+            else if(request_categories.status===403){
+              $('#dashbody').append('<div/>',{
+                id:'login_error',
+                text: 'Lol you didn\'t login'
+              });
+            }
+          }
 
 
 
 
 
+      }
+
+      request_categories.open('GET','http://localhost:8082/get-categories/',true);
+      request_categories.send(null);
+
+
+});
+
+
+
+
+$('#postbutton').click(function(){
+  var request_post = new XMLHttpRequest();
+  request_post.onload = function(){
+    if(request_post.readystate=XMLHttpRequest.DONE){
+      if(request_post.status===200){
+        $('#dashbody').prepend('DONE');
+      }
+    }
+  }
+
+  var title = document.getElementById('title').value;
+  var content = document.getElementById('postinput').value;
+  console.log(categories);
+  request_post.open('POST', 'http://localhost:8082/create-article', true);
+  request_post.setRequestHeader('Content-Type', 'application/json');
+  request_post.send(JSON.stringify({title: title, content:content, categories:categories}));
+
+
+});
 
 
 

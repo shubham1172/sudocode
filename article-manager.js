@@ -7,7 +7,7 @@ It contains the following features:
   deleteArticle with article ID
 */
 var sessionManager = require("./session-manager");
-var sanitizer = require('sanitize-html');
+var sanitize = require('sanitize-html');
 var categoryManager = require("./category-manager")
 var commentManager = require("./comment-manager");
 var promise = require('bluebird');
