@@ -111,6 +111,9 @@ function insertArticle(obj, callback){
             return promise.all(queries)
               .then(function(){
                 return promise.resolve(data.id);
+              })
+              .catch(function(err){
+                console.log(err.toString());
               });
         });
     })
@@ -182,7 +185,7 @@ exports.createArticle = function(req, res, pool){
       var title = sanitize(req.body.title);
       var content = sanitize(req.body.content);
       var categories = JSON.parse(req.body.categories);
-      if(title.trim()==""||content.trim()==""||categories.length==0)
+      if(title.trim()==""||content.trim()==""||categories.length==0||categories.constructor!== Array)
         res.status(500).send("Bad request");
       else{
         var obj = {title: title, content: content, uid: uid, pool: pool, categories: categories, status: 200};
