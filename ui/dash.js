@@ -113,7 +113,7 @@ $(this).on("click", ".categories_tab", function(){
     });
 
 
-
+  categories = [];
 
 $('#postcategory').click(function(){
 
@@ -129,9 +129,11 @@ $('#postcategory').click(function(){
                   $('#catdrop').append('<li class="categoriesdrop" id="temp_id1"><span>'+data[x]+'</span></li>');
                   $('#temp_id1').attr('id',data[x]);
                 }
+
                 $('.categoriesdrop').click(function(){
-                  categories = this.id;
-                  $('#postcategory').html("#"+this.id+" "+'<span class="caret"></span>');
+
+                  categories.push(this.id);
+                  $('#categorydiv').append("#"+this.id+" ");
                   $('#catdrop').remove();
                   $('#post').append('<ul class="dropdown-menu dropdown-menu-right" id="catdrop"></ul>')
                 });
@@ -182,9 +184,11 @@ $('#postbutton').click(function(){
   var title = document.getElementById('title').value;
   var content = document.getElementById('postinput').value;
   console.log(categories);
+  console.log(content);
+  console.log(title);
   request_post.open('POST', 'http://localhost:8082/create-article', true);
   request_post.setRequestHeader('Content-Type', 'application/json');
-  request_post.send(JSON.stringify({title: title, content:content, categories:categories}));
+  request_post.send(JSON.stringify({title: title, content:content, categories:JSON.stringify(categories)}));
 
 
 });
