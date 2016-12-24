@@ -29,7 +29,7 @@
   background-color: #F2F2F2;
   display: inline-block;
   width: 600px;
-  height: 200px;
+  height: 250px;
   position: relative;
 
 }
@@ -79,4 +79,27 @@
   background-color: green;
   color: white;
   cursor: hand;
+}
+
+
+
+#cross{
+  color:white;
+}
+
+#cross:hover{
+  color:green;
+}
+
+
+.hashtag{
+  display: inline-block;
+  background-color: white;
+  border-radius: 100px;
+
+}
+
+
+#dot{
+  visibility: hidden;
 }

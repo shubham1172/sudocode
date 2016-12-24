@@ -108,5 +108,8 @@ login.click(function(){
   request_login.send(JSON.stringify({id: id, password: password}));
 });
 //loggin the user in.
-
+setInterval(function(){
+  $('blink').fadeIn('slow');
+  $('blink').fadeOut('slow');}
+  ,400);
 });

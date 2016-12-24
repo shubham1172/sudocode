@@ -1,6 +1,5 @@
-
 $(document).ready(function(){
-
+  $('#text').height($(window).height()-($('#header').height()+$('#footer').height()));
   //Get Username
   var request_username = new XMLHttpRequest();
   request_username.onload = function(){
@@ -133,7 +132,7 @@ $('#postcategory').click(function(){
                 $('.categoriesdrop').click(function(){
 
                   categories.push(this.id);
-                  $('#categorydiv').append("#"+this.id+" ");
+                  $('#categorydiv').append('<div class="hashtag">'+"#"+this.id+'<i class="fa fa-times" aria-hidden="true" id="cross"></i>'+'<span id="dot">.</span>'+'</div>');
                   $('#catdrop').remove();
                   $('#post').append('<ul class="dropdown-menu dropdown-menu-right" id="catdrop"></ul>')
                 });
@@ -178,6 +177,9 @@ $('#postbutton').click(function(){
       if(request_post.status===200){
         $('#dashbody').prepend('DONE');
       }
+      else if(request_post.status===500){
+        $('#dashbody').prepend(request_post.responseText);
+      }
     }
   }
 
@@ -191,6 +193,26 @@ $('#postbutton').click(function(){
   request_post.send(JSON.stringify({title: title, content:content, categories:JSON.stringify(categories)}));
 
 
+});
+
+$(function() {
+    //  changes mouse cursor when highlighting loawer right of box
+    $(document).on('mousemove', 'postinput', function(e) {
+		var a = $(this).offset().top + $(this).outerHeight() - 16,	//	top border of bottom-right-corner-box area
+			b = $(this).offset().left + $(this).outerWidth() - 16;	//	left border of bottom-right-corner-box area
+		$(this).css({
+			cursor: e.pageY > a && e.pageX > b ? 'nw-resize' : ''
+		});
+	})
+    //  the following simple make the textbox "Auto-Expand" as it is typed in
+    .on('keyup', 'textarea', function(e) {
+        //  the following will help the text expand as typing takes place
+        while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+            $('#post').height($('#post').height()+1);
+            $(this).height($(this).height()+1);
+
+        };
+    });
 });
 
 
@@ -213,9 +235,10 @@ $('#postbutton').click(function(){
 
 
 
-
-
-
+setInterval(function(){
+  $('blink').fadeIn('slow');
+  $('blink').fadeOut('slow');}
+  ,400);
 
 
 

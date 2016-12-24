@@ -62,10 +62,12 @@ button::after{
 #text{
 
    padding:0;
-   /*height: 100%;*/
+   height: 100%;
 	 font-family: courier;
 	 text-indent: 10px;
 	 color:green;
+	 overflow-y: auto;
+
 }
 
 
@@ -74,7 +76,7 @@ button::after{
 #footer{
 	font-weight:bold;
 	 color: green;
-	 position: fixed;
+	 position: absolute;
 	 bottom: 0;
 	 height : 40px;
 	 margin-top : 40px;
