@@ -140,3 +140,9 @@ color: white;
 #settings:hover, #logoutbtn:hover{
 	color:red;
 }
+
+
+#christmas{
+	height:50px;
+	left: 10px;
+}
