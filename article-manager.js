@@ -72,7 +72,7 @@ function checkArticle(obj, callback){
       obj.status = 200;
     else
       obj.status = 417;
-    console.log(results);
+    //console.log(results);
     callback(null, obj);
   })
   .catch(function(error){
