@@ -51,7 +51,7 @@ function sort_handler(data, pool, callback_sort){
   }, function(err, data){
     if(err){
       console.log(err.toString());
-      callback("Error");
+      callback_sort("Error");
     } else
     callback_sort(data);
   });
