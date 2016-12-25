@@ -182,8 +182,8 @@ exports.createArticle = function(req, res, pool){
     else {
       //Create article
       var uid = req.session.auth.userId;
-      var title = sanitize(req.body.title);
-      var content = sanitize(req.body.content);
+      var title = sanitize(req.body.title.trim());
+      var content = sanitize(req.body.content.trim());
       var categories = JSON.parse(req.body.categories);
       if(title.trim()==""||content.trim()==""||categories.length==0||categories.constructor!== Array)
         res.status(500).send("Bad request");
