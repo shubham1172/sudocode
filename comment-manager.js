@@ -184,3 +184,9 @@ exports.deleteComment = function(req, res, pool){
     }
   });
 }
+
+exports.getNumberOfComments = function(aid, pool, callback){
+  getComments(aid, pool, function(comments) {
+    callback(comments.length);
+  });
+}
