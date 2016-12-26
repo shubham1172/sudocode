@@ -125,16 +125,20 @@ $('#postcategory').click(function(){
             if(request_categories.status===200||request_categories.status===304){
                 var data = JSON.parse(request_categories.responseText);
                 for(var x=0;x<data.length;x++){
-                  $('#catdrop').append('<li class="categoriesdrop" id="temp_id1"><span>'+data[x]+'</span></li>');
-                  $('#temp_id1').attr('id',data[x]);
-                }
+                  if(categories.includes(data[x])!=true){
+                    $('#catdrop').append('<li class="categoriesdrop" id="temp_id1"><span>'+data[x]+'</span></li>');
+                    $('#temp_id1').attr('id',data[x]);
+                  }
 
+
+                }
+                  flag = 1;
                 $('.categoriesdrop').click(function(){
 
                   categories.push(this.id);
                   $('#categorydiv').append('<div class="hashtag">'+"#"+this.id+'<i class="fa fa-times" aria-hidden="true" id="cross"></i>'+'<span id="dot">.</span>'+'</div>');
                   $('#catdrop').remove();
-                  $('#post').append('<ul class="dropdown-menu dropdown-menu-right" id="catdrop"></ul>')
+                  $('.modal-content').append('<ul class="dropdown-menu dropdown-menu-right" id="catdrop"></ul>');
                 });
             }
 
@@ -195,38 +199,9 @@ $('#postbutton').click(function(){
 
 });
 
-$(function() {
-    //  changes mouse cursor when highlighting loawer right of box
-    $(document).on('mousemove', 'postinput', function(e) {
-		var a = $(this).offset().top + $(this).outerHeight() - 16,	//	top border of bottom-right-corner-box area
-			b = $(this).offset().left + $(this).outerWidth() - 16;	//	left border of bottom-right-corner-box area
-		$(this).css({
-			cursor: e.pageY > a && e.pageX > b ? 'nw-resize' : ''
-		});
-	})
-    //  the following simple make the textbox "Auto-Expand" as it is typed in
-    .on('keyup', 'textarea', function(e) {
-        //  the following will help the text expand as typing takes place
-        while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
-            $('#post').height($('#post').height()+1);
-            $(this).height($(this).height()+1);
+$('#postinput').click(function(){
 
-        };
-    });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -29,7 +29,7 @@
   background-color: #F2F2F2;
   display: inline-block;
   width: 600px;
-  height: 250px;
+  height: 150px;
   position: relative;
 
 }
@@ -48,10 +48,43 @@
 
 
 
+#posttrigger{
+  width: 450px;
+  border: 2px solid green;
+  position: absolute;
+  top: 30;
+  left: 70;
+  background-color: white;
+  color: green;
+  cursor: text;
+  border-radius: 0px;
+}
+
+
+
+#postinput{
+  height: 500px;
+  width: 500px;
+}
+
+
+#postbutton{
+  padding: 5px 5px 20px 5px;
+  width: 100px;
+  height: 40px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin-top: 0;
+}
+
+
+
 #postinput{
   width: 450px;
-  heigth: 200px;
+  height: 50px;
   border: 0px;
+  margin-bottom: 20px;
 }
 
 #postcategory{
@@ -94,12 +127,17 @@
 
 .hashtag{
   display: inline-block;
-  background-color: white;
+  background-color: #F2F2F2;
   border-radius: 100px;
 
 }
 
 
+
 #dot{
   visibility: hidden;
+}
+
+#categorydiv{
+    margin-top: 5px;
 }

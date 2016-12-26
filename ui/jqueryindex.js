@@ -55,7 +55,7 @@ $('#logoutbtn').click(function(){
 });
 
 $('#home').click(function(){
-  window.location.href = 'http://localhost:8082/ui/uc.html';
+  $('#text').load('http://localhost:8082/ui/dashboard.html')
 });
 
 
