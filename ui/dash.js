@@ -43,6 +43,7 @@ $('#categories').click(function(){
 
         if(request_categories.status===200||request_categories.status===304){
             var data = JSON.parse(request_categories.responseText);
+            console.log('inside if')
             $('#dashbody').html('');
             for(var x=0;x<data.length;x++){
               $('#dashbody').append('<div class="categories_tab" id="temp_id"><span>'+'#'+data[x]+'</span></div>');
@@ -84,7 +85,7 @@ $('#categories').click(function(){
 
 
 
-$(this).on("click", ".categories_tab", function(){
+$(this).off('click').on("click", ".categories_tab", function(){
     console.log('clicked_categories');
     console.log(this.id);
     var request_article_by_categories = new XMLHttpRequest();
@@ -94,7 +95,15 @@ $(this).on("click", ".categories_tab", function(){
 
         if(request_article_by_categories.status===200){
           console.log(request_article_by_categories.responseText);
+          var categoryposts = JSON.parse(request_article_by_categories.responseText);
+          console.log(categoryposts.length);
+          $('#dashbody').append('<div id="articlediv"></div>')
+          for(var i=0;i<categoryposts.length;i++){
+            $('#articlediv').append('<div class="article"><div class="username">'+categoryposts[i].uid+'</div><div class="datetime">'+categoryposts[i].datetime+'</div><div class="lastmodified">'+categoryposts[i].lastmodified+'</div><div class="articletitle">'+categoryposts[i].title+'</div><div class="articlecontent">'+categoryposts[i].content+'</div></div>')
 
+          }
+          $('#text').height($(window).height()-($('#header').height()+$('#footer').height()));
+        //  $('#article').width((window.width()-20)/2);
         }
 
         else if(request_article_by_categories.status===500){
@@ -132,7 +141,7 @@ $('#postcategory').click(function(){
 
 
                 }
-                  flag = 1;
+
                 $('.categoriesdrop').click(function(){
 
                   categories.push(this.id);
@@ -175,6 +184,7 @@ $('#postcategory').click(function(){
 
 
 $('#postbutton').click(function(){
+
   var request_post = new XMLHttpRequest();
   request_post.onload = function(){
     if(request_post.readystate=XMLHttpRequest.DONE){
