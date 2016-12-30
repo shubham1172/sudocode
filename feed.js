@@ -15,7 +15,7 @@ exports.getArticles = function(req, res, pool){
     else if(isLogged=="error")
       res.status(500).send("Error");
     else
-      pool.any("SELECT * FROM sudocode.articles LIMIT 50")
+      pool.any("SELECT a.*, b.username FROM sudocode.articles AS a JOIN sudocode.users AS b ON a.uid = b.id LIMIT 50")
       .then(function(results){
           sort_handler(results, pool, function(handled){
             sort(handled, function(sorted){
@@ -51,7 +51,7 @@ function sort_handler(data, pool, callback_sort){
   }, function(err, data){
     if(err){
       console.log(err.toString());
-      callback_sort("Error");
+      callback("Error");
     } else
     callback_sort(data);
   });

@@ -15,7 +15,7 @@ var async = require('async');
 
 function getArticle(condition, pool, callback){
   pool.task(function(t){
-    return t.any("SELECT * FROM sudocode.articles WHERE " + condition.one, [condition.two]);
+    return t.any("SELECT a.*, b.username FROM sudocode.articles AS a JOIN sudocode.users AS b ON a.uid = b.id WHERE " + condition.one, [condition.two]);
   })
   .then(function(results){
     async.map(results, function(result, callback){
@@ -48,7 +48,7 @@ function getArticleByCategory(category, pool, callback){
       for(var x=0;x<result.length;x++){
           result[x] = parseInt(result[x].aid, 10);
       }
-      var condition = {one:"id = ANY($1) ORDER BY datetime DESC", two: result};
+      var condition = {one:"a.id = ANY($1) ORDER BY datetime DESC", two: result};
       getArticle(condition, pool, function(resultx){
         callback(resultx);
       });
@@ -237,7 +237,7 @@ exports.getArticle = function(req, res, pool){
           });
         }
         else{
-          var condition = {one: "uid = $1 ORDER BY datetime DESC", two: uid};
+          var condition = {one: "a.uid = $1 ORDER BY datetime DESC", two: uid};
           getArticle(condition, pool, function(results){
             if(results=="error")
               res.status(500).send("Error");
