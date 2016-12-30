@@ -141,3 +141,7 @@
 #categorydiv{
     margin-top: 5px;
 }
+
+#text{
+  overflow-y: scroll;
+}

@@ -49,6 +49,7 @@ $('#categories').click(function(){
               $('#dashbody').append('<div class="categories_tab" id="temp_id"><span>'+'#'+data[x]+'</span></div>');
               $('#temp_id').attr('id',data[x]);
             }
+            $('#dashbody').append('<hr><br>')
             $('#categories').remove();
             $('#post').remove();
         }
@@ -85,7 +86,7 @@ $('#categories').click(function(){
 
 
 
-$(this).off('click').on("click", ".categories_tab", function(){
+$(this).on("click",".categories_tab", function(evt){
     console.log('clicked_categories');
     console.log(this.id);
     var request_article_by_categories = new XMLHttpRequest();
@@ -94,16 +95,21 @@ $(this).off('click').on("click", ".categories_tab", function(){
       if(request_article_by_categories.readystate = XMLHttpRequest.DONE){
 
         if(request_article_by_categories.status===200){
-          console.log(request_article_by_categories.responseText);
+          //console.log(request_article_by_categories.responseText);
           var categoryposts = JSON.parse(request_article_by_categories.responseText);
-          console.log(categoryposts.length);
+          //console.log(categoryposts.length);
           $('#dashbody').append('<div id="articlediv"></div>')
+          $('#articlediv').html('');
           for(var i=0;i<categoryposts.length;i++){
-            $('#articlediv').append('<div class="article"><div class="username">'+categoryposts[i].uid+'</div><div class="datetime">'+categoryposts[i].datetime+'</div><div class="lastmodified">'+categoryposts[i].lastmodified+'</div><div class="articletitle">'+categoryposts[i].title+'</div><div class="articlecontent">'+categoryposts[i].content+'</div></div>')
+            var m = moment(JSON.stringify(categoryposts[i].datetime));
+
+            m.format('LLL');
+
+            $('#articlediv').append('<div class="article"><div class="username">'+categoryposts[i].uid+'</div><div class="history"><div class="datetime">'+m+'</div><div class="lastmodified">last modified: '+categoryposts[i].lastmodified+'</div></div><br><br><hr><div class="articletitle">'+categoryposts[i].title+'</div><br><br><div class="articlecontent">'+categoryposts[i].content+'</div><hr><div class="carousel-caption" id="comments"></div></div><br>')
 
           }
           $('#text').height($(window).height()-($('#header').height()+$('#footer').height()));
-        //  $('#article').width((window.width()-20)/2);
+          $('#article').width(150);
         }
 
         else if(request_article_by_categories.status===500){
@@ -116,9 +122,11 @@ $(this).off('click').on("click", ".categories_tab", function(){
     var art_id = this.id;
     request_article_by_categories.open('GET','http://localhost:8082/get-articles/?category='+art_id,true);
     request_article_by_categories.send(null);
+	evt.stopPropagation();
+	evt.preventDefault();
+	evt.stopImmediatePropagation();
 
-
-    });
+ });
 
 
   categories = [];
