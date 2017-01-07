@@ -4,6 +4,7 @@
   Sorting takes place on various factors like timing, popularity, comments, etc
 */
 var commentManager = require("./comment-manager"); //getCommentsById
+var categoryManager = require("./category-manager"); //getCategory
 var voter = require("./voter"); //getPopularity
 var sessionManager = require("./session-manager");
 var async = require('async');
@@ -17,9 +18,22 @@ exports.getArticles = function(req, res, pool){
     else
       pool.any("SELECT a.*, b.username FROM sudocode.articles AS a JOIN sudocode.users AS b ON a.uid = b.id LIMIT 50")
       .then(function(results){
-          sort_handler(results, pool, function(handled){
-            sort(handled, function(sorted){
-              res.status(200).send(JSON.stringify(sorted));
+            async.map(results, function(result, callback){
+              commentManager.getCommentsById(result.id, pool, function(res){
+                result.comments = res;
+                categoryManager.getCategoriesByArticle(result.id, pool, function(resX){
+                  result.categories = resX;
+                  callback(null, result)
+                });
+              });
+            }, function(err, resultx){
+              if(err)
+                res.status(500).send("Error");
+              else
+              sort_handler(resultx, pool, function(handled){
+                sort(handled, function(sorted){
+                  res.status(200).send(JSON.stringify(sorted));
+              });
             });
           });
       })
