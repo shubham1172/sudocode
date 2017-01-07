@@ -7,7 +7,7 @@ $(document).ready(function(){
 
 dashboard();
 
-  //Make dashboard article request
+//Get feed
   function dashboard(){
     console.log('feed_function');
     var feed = new XMLHttpRequest();
@@ -16,7 +16,7 @@ dashboard();
         if(feed.status===200){
           feedposts = JSON.parse(feed.responseText);
           for(var i=0;i<feedposts.length;i++){
-            $('#dashbody').append('<div class="article"><div class="username">'+feedposts[i].username+'</div><div class="history"><div class="datetime">'+feedposts[i].datetime+'</div><div class="lastmodified">last modified: '+feedposts[i].lastmodified+'</div></div><br><br><hr><div class="articletitle">'+feedposts[i].title+'</div><br><br><div class="articlecontent">'+feedposts[i].content+'</div><hr><div id="myCarousel" class="carousel slide" data-ride="carousel" id="comments"><div class="carousel-inner" role="listbox"> </div><button class="commentbutton">Have some thoughts?</button></div></div><br>');
+            $('#dashbody').append('<div class="article" id='+feedposts[i].id+'><div class="username">'+feedposts[i].username+'</div><div class="history"><div class="datetime">'+feedposts[i].datetime+'</div><div class="lastmodified">last modified: '+feedposts[i].lastmodified+'</div></div><br><br><hr><div class="articletitle">'+feedposts[i].title+'</div><br><br><div class="articlecontent">'+feedposts[i].content+'</div><hr><div id="myCarousel" class="carousel slide" data-ride="carousel" id="comments"><div class="carousel-inner" role="listbox"> </div><button class="commentbutton">Have some thoughts?</button></div></div><br>');
             }
         }
         else if(feed.status===500){
@@ -30,7 +30,7 @@ dashboard();
   feed.send(null);
 }
 
-
+//Get Article by category
 $(this).on("click",".categories_tab", function(evt){
     console.log('clicked_categories');
     console.log(this.id);
@@ -50,7 +50,7 @@ $(this).on("click",".categories_tab", function(evt){
 
           //  m.format('LLL');
 
-            $('#articlediv').append('<div class="article"><div class="username">'+categoryposts[i].username+'</div><div class="history"><div class="datetime">'+categoryposts[i].datetime+'</div><div class="lastmodified">last modified: '+categoryposts[i].lastmodified+'</div></div><br><br><hr><div class="articletitle">'+categoryposts[i].title+'</div><br><br><div class="articlecontent">'+categoryposts[i].content+'</div><hr><div id="myCarousel" class="carousel slide" data-ride="carousel" id="comments"><div class="carousel-inner" role="listbox"> </div><button class="commentbutton">Have some thoughts?</button></div></div><br>')
+            $('#articlediv').append('<div class="article" id='+categoryposts[i].id+'><div class="username">'+categoryposts[i].username+'</div><div class="history"><div class="datetime">'+categoryposts[i].datetime+'</div><div class="lastmodified">last modified: '+categoryposts[i].lastmodified+'</div></div><br><br><hr><div class="articletitle">'+categoryposts[i].title+'</div><br><br><div class="articlecontent">'+categoryposts[i].content+'</div><hr><div id="myCarousel" class="carousel slide" data-ride="carousel" id="comments"><div class="carousel-inner" role="listbox"> </div><button class="commentbutton">Have some thoughts?</button></div></div><br>')
 
           }
           $('#text').height($(window).height()-($('#header').height()+$('#footer').height()));
@@ -75,6 +75,8 @@ $(this).on("click",".categories_tab", function(evt){
 
  });
 
+
+//Create Article
  $('#postbutton').click(function(){
    var request_post = new XMLHttpRequest();
    request_post.onload = function(){
@@ -106,3 +108,5 @@ $(this).on("click",".categories_tab", function(evt){
 
 
 });
+
+//Create comment
