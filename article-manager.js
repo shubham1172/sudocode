@@ -40,7 +40,7 @@ function getArticle(condition, pool, callback){
 }
 
 function getArticleByCategory(category, pool, callback){
-  pool.any("SELECT aid FROM sudocode.\"article-categories\" WHERE category = $1", [category[0].toUpperCase() + category.toLowerCase().substring(1)])
+  pool.any("SELECT aid FROM sudocode.\"article-categories\" WHERE lower(category) = $1", category.toLowerCase())
   .then(function(result){
     if(result.length==0)
       callback("empty");
