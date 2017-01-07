@@ -26,9 +26,7 @@ submit.click (function(){
                   var username = request_id.responseText;
                 //console.log(request_id.responseText);
                 document.getElementById('label').innerHTML = '<span id="un">'+request_id.responseText+'</span>'+ ',<span id="txt"> Enter your password.<br></span>';
-                $('#loginform').load('http://localhost:8082/ui/loginpsk.html',function() {
-                initial_loader();
-            });
+                $('#loginform').load('http://localhost:8082/ui/loginpsk.html');
                 document.getElementById('userid').innerHTML = id;
                 $("#userid").hide();
 
@@ -53,9 +51,7 @@ submit.click (function(){
 
 
         else{
-            $('#loginscreen').load('http://localhost:8082/ui/dashboard.html',function() {
-                initial_loader();
-            });
+            $('#loginscreen').load('http://localhost:8082/ui/dashboard.html');
             $('#menu').html(' <span class="dropdown"><i class="fa fa-user-o" aria-hidden="true" id="logout" id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-menu-left"></i><span class="dropdown-menu" aria-labelledby="dLabel"> <span id="settings">Settings</span><br> <span id="logoutbtn">Logout</span></span>  <i class="fa fa-home" aria-hidden="true" id="home"></i>  <i class="fa fa-coffee" aria-hidden="true" id="categories"></i>')
         }
 
@@ -111,11 +107,7 @@ login.click(function(){
   request_login.setRequestHeader('Content-Type', 'application/json');
   request_login.send(JSON.stringify({id: id, password: password}));
 });
-function initial_loader() {
 
-    jQuery(".dial").knob();
-
-}
 //loggin the user in.
 setInterval(function(){
   $('blink').fadeIn('slow');
