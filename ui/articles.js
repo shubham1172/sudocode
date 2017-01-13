@@ -30,8 +30,7 @@ dashboard();
   feed.send(null);
 }
 
-<<<<<<< HEAD
-=======
+
 //Get Article by category
 $(this).on("click",".categories_tab", function(evt){
     console.log('clicked_categories');
@@ -76,7 +75,7 @@ $(this).on("click",".categories_tab", function(evt){
 	evt.stopImmediatePropagation();
 
  });
->>>>>>> ce98d91f4e9f1dad5e4a91eac6dea0578262ae32
+
 
 
 //Create Article
