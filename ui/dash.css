@@ -9,6 +9,10 @@
   line-height: 50px;
   border: 0.1px solid black;
   text-align: center;
+<<<<<<< HEAD
+
+=======
+>>>>>>> ce98d91f4e9f1dad5e4a91eac6dea0578262ae32
 }
 
 .span{
@@ -128,3 +132,12 @@
   #text{
     overflow-y: scroll;
   }
+<<<<<<< HEAD
+
+
+#dashbody{
+  width: 100%;
+  text-align: center;
+}
+=======
+>>>>>>> ce98d91f4e9f1dad5e4a91eac6dea0578262ae32

@@ -1,6 +1,13 @@
 $(document).ready(function(){
   $('#text').height($(window).height()-($('#header').height()+$('#footer').height()));
+<<<<<<< HEAD
+
+
+
+//Get Username
+=======
   //Get Username
+>>>>>>> ce98d91f4e9f1dad5e4a91eac6dea0578262ae32
   var request_username = new XMLHttpRequest();
   request_username.onload = function(){
     console.log('done1')
@@ -30,6 +37,9 @@ $('#dropdown').click(function(){
 });
 
 
+<<<<<<< HEAD
+//Categories Page opening request
+=======
 
 //Categories Request
 
@@ -85,6 +95,7 @@ $('#categories').click(function(){
 
 
 
+>>>>>>> ce98d91f4e9f1dad5e4a91eac6dea0578262ae32
 $(this).on("click", ".categories_tab", function(){
     console.log('clicked_categories');
     console.log(this.id);
@@ -113,6 +124,11 @@ $(this).on("click", ".categories_tab", function(){
     });
 
 
+<<<<<<< HEAD
+
+//Categories inside post
+=======
+>>>>>>> ce98d91f4e9f1dad5e4a91eac6dea0578262ae32
   categories = [];
 
 $('#postcategory').click(function(){
@@ -176,6 +192,11 @@ $('#postcategory').click(function(){
 
 });
 
+<<<<<<< HEAD
+$("#categories").click(function(){
+  window.location.href = "http://localhost:8082/ui/categories.html";
+})
+=======
 
 
 //Create Article
@@ -186,6 +207,7 @@ $('#postcategory').click(function(){
 
 
 
+>>>>>>> ce98d91f4e9f1dad5e4a91eac6dea0578262ae32
 
 
 setInterval(function(){
