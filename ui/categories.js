@@ -1,6 +1,14 @@
 $(document).ready(function(){
 
 
+$('#home').click(function(){
+      window.location.href = "http://localhost:8082/"
+       });
+
+$('#dropdown').click(function(){
+         $('.dropdown-toggle').dropdown();
+       });
+
 //Category Tab Request for the categories page.
     var request_categories = new XMLHttpRequest();
     request_categories.onload = function(){
@@ -74,7 +82,7 @@ $(document).ready(function(){
               $('#text').height($(window).height()-($('#header').height()+$('#footer').height()));
               $('#article').width(150);
               console.log("DASHING");
-              dashboard();
+            //  dashboard();
             }
 
             else if(request_article_by_categories.status===500){
