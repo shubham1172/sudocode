@@ -37,7 +37,12 @@ app.use(session({
 }));
 
 app.get('/', function(req,res){
-  res.sendFile(path.join(__dirname, 'ui', 'index.html'));
+      res.sendFile(path.join(__dirname, 'ui', 'index.html'));
+});
+
+//html files
+app.get('/:fileName.:html', function(req, res){
+    res.sendFile(path.join(__dirname, 'ui', req.params.fileName+'.html'));
 });
 
  //front end files
