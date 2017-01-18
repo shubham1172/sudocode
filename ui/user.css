@@ -1,0 +1,44 @@
+
+#profile{
+  display: inline-block;
+}
+
+
+
+
+
+#profile_image{
+  border: 5px solid #a4a6aa;
+  margin-top: -90px;
+  margin-left: 10px;
+  border-radius: 100px;
+}
+
+#username{
+  font-size: 28px;
+  font-weight: bold;
+  display: inline-block;
+  color: #404142;
+}
+
+#userdata{
+  display: inline-block;
+  marging-left: 40px;
+  padding-top: 60px;
+  font-family: verdana;
+  font-weight: 100;
+  padding-left: 30px;
+}
+
+#uid{
+  color: #82868c;
+  font-size: 20px;
+}
+
+#bio{
+  color: #82868c;
+}
+
+#bioline{
+background-color:#e0e2e5; height: 1px; border: 0;
+}

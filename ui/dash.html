@@ -5,13 +5,16 @@
 		<link rel="stylesheet" href="http://localhost:8082/ui/styles.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-		 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script src="http://localhost:8082/ui/jqueryindex.js"></script>
-		<script src="http://localhost:8082/ui/login.js"></script>
-		<script src="http://localhost:8082/ui/dash.js"></script>
+		<script src="http://localhost:8082/ui/dash2.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+		<script src="http://localhost:8082/ui/menu.js"></script>
 		<link rel="shortcut icon" href="logo.ico" />
 		<link rel="stylesheet" href="http://localhost:8082/ui/?filePath=font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="http://localhost:8082/ui/articles.css">
+		<link rel="stylesheet" href="http://localhost:8082/ui/dash.css">
+		<script src="http://localhost:8082/ui/autosize.js"></script>
 		<meta name="viewport" content="width=device-width">
 </head>
 
@@ -29,7 +32,60 @@ $sudocode<blink>_</blink>
 </div>
 
 <!--header-->
+<div id="dashmsg">
+</div><br>
 
+<div class="container" align="center">
+  <!-- Trigger the modal with a button -->
+	<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" id="posttrigger">
+		  What's on your mind?
+		</button>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialogue">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"><input type="text" placeholder="Title" id="title"></input></h4>
+        </div>
+        <div class="modal-body">
+					<div class="media-body">
+
+													 <div class="form-group" style="padding:12px;">
+														<textarea class="form-control animated" placeholder="Update your status" id="postinput"></textarea>
+													 </div>
+
+					</div>
+
+
+
+					<script>
+					$(function(){
+					$('.normal').autosize();
+					$('.animated').autosize({append: "\n"});
+					});
+					</script>
+        </div>
+				<div id="categorydiv"></div>
+        <div class="modal-footer">
+
+					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="postcategory">Categories<span class="caret"></span></button>
+
+						<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="menu1" id="catdrop"></ul>
+
+
+          <button type="button" class="btn btn-default" data-dismiss="modal"  id="postbutton">Post</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<div id="dashbody"><br><br>
+</div>
+<br><br><br><br><br>
 <!--footer-->
 <div id="footer">
 

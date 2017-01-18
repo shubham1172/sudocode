@@ -16,6 +16,7 @@ body{
   font-size: 24px;
   color: green;
   font-weight: bold;
+  margin-left: 10px;
 }
 
 .history{
@@ -35,6 +36,7 @@ body{
 
 .articlecontent{
   text-align:left;
+  margin-left: 10px;
 }
 
 .commentbutton{
@@ -46,6 +48,7 @@ body{
   text-align: left;
   padding: 5px 15px 20px 5px;
   font-weight: normal;
+  margin-bottom: 10px;
 }
 
 .commentbutton:hover{
