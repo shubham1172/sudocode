@@ -4,9 +4,9 @@ $(document).ready(function(){
   //Get Username
   var request_username = new XMLHttpRequest();
   request_username.onload = function(){
-    console.log('done1')
+  //  console.log('done1')
     if(request_username.readystate = XMLHttpRequest.DONE){
-      console.log('done2');
+    //  console.log('done2');
         if(request_username.status===403){
           document.getElementById('dashmsg').innerHTML = 'Not logged in';
         }
@@ -16,7 +16,7 @@ $(document).ready(function(){
 
         else{
           var username = request_username.responseText;
-        document.getElementById('dashmsg').innerHTML = request_username.responseText;
+        //document.getElementById('dashmsg').innerHTML = request_username.responseText;
 
         }
 

@@ -12,6 +12,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
 		<script src="http://localhost:8082/ui/menu.js"></script>
     <script src="http://localhost:8082/ui/settings.js"></script>
+		<script src="http://localhost:8082/ui/autosize.js"></script>
 		<link rel="shortcut icon" href="logo.ico" />
 		<link rel="stylesheet" href="http://localhost:8082/ui/?filePath=font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css">
 		<meta name="viewport" content="width=device-width">
@@ -44,15 +45,15 @@ $sudocode<blink>_</blink>
 </div>
 
 <!--header-->
-<div id="nav" align="center">
+<div id="msg" align="center" style="color:green; font-weight: bold; font-size: 18px; font-family: courier">
 </div>
-<div id="userid"></div>
+
 <!--body-->
 <div id="update_img" style="float:right; padding-right: 100px; padding-top: 50px">
   <h4 style="padding-right: 10px">Profile Picture</h4>
   <img src="http://localhost:8082/get-photo" height="250" width="250" style="border: 2px solid #a4a6aa; border-radius: 10px;" ><br><br>
 <div class="fileUpload"><input type="file" class="upload" id="browse" name="BROWSE"/></div>
-<button class="update" id="upload" type="submit" style="border-color: transparent; width: 250px; height: 40px; padding-top: 10px;">Update Profile Picture</button>
+<button class="update" id="upload" type="submit" style="width: 250px; height: 40px; padding-top: 10px;">Update Profile Picture</button>
 </div>
 <div id="set_form">
 <h2>Change Password</h2>
@@ -71,11 +72,49 @@ $sudocode<blink>_</blink>
 <h4>Password:</h4>
 <input id="oldpsk_username" type="password" style="outline-style: none; border-color: transparent; width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1"><br><br><br>
 <button class="update" type="submit" id="update_username">Update Username</button><br><br>
-<h2 style="color:maroon">Delete Account</h2>
+<h2>Bio</h2>
+<hr>
+<div class="media-body">
+
+								 <div class="form-group">
+									<textarea placeholder="Update your bio" class="form-control animated" id="bio" style="width: 500px; outline-style: none; border-color: transparent;border-radius:5px; font-size: 20px; background-color:#f1f1f1"></textarea>
+								 </div>
+
+</div>
+
+<button class="update" type="submit" id="update_bio">Update Bio</button><br><br>
+
+<script>
+$(function(){
+$('.normal').autosize();
+$('.animated').autosize({append: "\n"});
+});
+</script>
+
+<h2 style="color:maroon">Deactivate Account</h2>
 <hr>
 
-<button id="delete_account" type="submit">Delete Account</button>
+<button id="delete_account" type="submit" data-toggle="modal" data-target="#deleteModal" style="width:250px">Deactivate Account</button>
+<div id="deleteModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h4 class="modal-title" style="color:maroon; font-weight: bold">Coding everyday keeps problems away!</h4>
+      </div>
+      <div class="modal-body">
+        <p style="color:maroon">Anyway we need your password one last time to deactivate your account.</p>
+				<input id="psk_delete" type="password" style="outline-style: none; border-color: transparent; width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="update btn btn-default" data-dismiss="modal" style="background-color: maroon;color:white">Deactivate</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 </div>
 <br><br><br><br><br><br><br>
 
