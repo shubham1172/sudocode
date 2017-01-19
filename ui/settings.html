@@ -26,6 +26,19 @@
 $sudocode<blink>_</blink>
 	<span id="userid"></span>
 <span id="menu" style="color:green; float:right "></span>
+<div id="menu" style="display: inline-block; float: right; padding-right: 60px">
+<span class="dropdown">
+<img src="http://localhost:8082/get-photo" height="29.600" width="29.600" style="border: 2px solid #a4a6aa; border-radius: 100px" class="dropdown-toggle" aria-hidden="true" id="logout" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<ul class="dropdown-menu dropdown-menu-right">
+		<li id="Profile">Profile</li>
+    <li id="settings">Settings</li>
+    <li id="logoutbtn">Logout</li>
+  </ul>
+<span>
+<i class="fa fa-home" aria-hidden="true" id="home"></i>
+<i class="fa fa-coffee" aria-hidden="true" id="categories"></i>
+</div>
+</div>
 </div>
 
 </div>
@@ -39,24 +52,24 @@ $sudocode<blink>_</blink>
   <h4 style="padding-right: 10px">Profile Picture</h4>
   <img src="http://localhost:8082/get-photo" height="250" width="250" style="border: 2px solid #a4a6aa; border-radius: 10px;" ><br><br>
 <div class="fileUpload"><input type="file" class="upload" id="browse" name="BROWSE"/></div>
-<button class="update" id="upload" type="submit" style="width: 250px; height: 40px; padding-top: 10px;">Update Profile Picture</button>
+<button class="update" id="upload" type="submit" style="border-color: transparent; width: 250px; height: 40px; padding-top: 10px;">Update Profile Picture</button>
 </div>
 <div id="set_form">
 <h2>Change Password</h2>
 <hr>
 <h4>Old Password:</h4>
-<input id="oldpsk" type="password" style="width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1"><br>
+<input id="oldpsk" type="password" style="outline-style: none; width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1; border-color: transparent"><br>
 <h4>New Password:</h4>
-<input id="newpsk1" type="password" style="width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1"><br>
+<input id="newpsk1" type="password" style="outline-style: none; width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1; border-color: transparent"><br>
 <h4>Confirm new Password:</h4>
-<input id="newpsk2" type="password" style="width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1"><br><br>
+<input id="newpsk2" type="password" style="outline-style: none; border-color: transparent; width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1; border-color: transparent"><br><br>
 <button class="update" type="submit" id="update_password">Update Password</button><br><br>
 <h2>Username</h2>
 <hr>
 <h4>Type a new username:</h4>
-<input type="text" style="width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1">
+<input id="set_username" type="text" style="outline-style: none; border-color: transparent; width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1">
 <h4>Password:</h4>
-<input id="oldpsk" type="password" style="width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1"><br><br><br>
+<input id="oldpsk_username" type="password" style="outline-style: none; border-color: transparent; width:300px;height: 35px; border-radius:5px; font-size: 20px; background-color:#f1f1f1"><br><br><br>
 <button class="update" type="submit" id="update_username">Update Username</button><br><br>
 <h2 style="color:maroon">Delete Account</h2>
 <hr>

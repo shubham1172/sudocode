@@ -64,4 +64,8 @@ $("#categories").click(function(){
   window.location.href = "http://localhost:8082/ui/categories.html";
 });
 
+$("#settings").click(function(){
+  window.location.href = "http://localhost:8082/ui/settings.html";
+});
+
 });
