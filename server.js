@@ -204,6 +204,11 @@ app.get('/get-feed', function(req, res){
   feed.getArticles(req,res,pool);
 });
 
+//can be used as /check-username/?username=username
+app.get('/check-username', function(req, res){
+  user.checkUserAvailable(req, res, pool);
+});
+
 var port = 8082;
 app.listen(port, function(){
   console.log('SUDOCODE up and running on 8082!');
