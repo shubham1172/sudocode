@@ -36,13 +36,36 @@ function checkUsernameAvailable(obj, callback){
   });
 }
 
+exports.checkUserAvailable = function(req, res, pool){
+    var username = req.query.username;
+    sessionManager.checkLoginf(req, pool, function(isLogged) {
+      if(isLogged=="false")
+        res.status(403).send("Login to check");
+      else if(isLogged=="error")
+        res.status(500).send("Error");
+      else if(username==undefined)
+        res.status(404).send("Bad request");
+      else {
+          var obj = {username: username, pool: pool}
+          checkUsernameAvailable(obj, function(available){
+            if(available==true)
+              res.status(200).send(true);
+            else if(available=="error")
+              res.status(500).send("Error");
+            else
+              res.status(406).send("Not available");
+          });
+      }
+    });
+}
+
 exports.setUsername = function(req, res, pool){
     sessionManager.checkLoginf(req, pool, function(isLogged){
         if(isLogged=="false")
           res.status(403).send("Login to set username");
         else if(isLogged=="error")
           res.status(500).send("Error");
-        else if(req.body.username.trim()=="")
+        else if(req.body.username.trim()==""||req.body.username.includes(" "))
           res.status(500).send("Bad request");
         else{
           //now check if the username is taken by anyone else or not!
