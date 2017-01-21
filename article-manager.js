@@ -61,7 +61,9 @@ function getArticleByCategory(category, pool, callback){
 }
 
 function checkArticle(obj, callback){
-  var condition = "title = '" + obj.title + "' and content = '" + obj.content + "' and uid = '" + obj.uid + "'";
+  var temp_title  = obj.title.replace(/'/g, "''");
+  var temp_content = obj.content.replace(/'/g, "''");
+  var condition = "title = '" + temp_title + "' and content = '" + temp_content + "' and uid = '" + obj.uid + "'";
   obj.pool.task(function(t){
     return t.any("SELECT uid, title, content, datetime, lastmodified FROM sudocode.articles WHERE " + condition);
   })
@@ -77,6 +79,7 @@ function checkArticle(obj, callback){
   })
   .catch(function(error){
     obj.status = 500;
+    console.log(error.toString());
     callback(null, obj);
   });
 }
@@ -115,6 +118,11 @@ function insertArticle(obj, callback){
               .catch(function(err){
                 console.log(err.toString());
               });
+        })
+        .catch(function(error){
+          obj.status = 500;
+          console.log(error.toString());
+          callback(null, obj.status);
         });
     })
     .then(function(result){
